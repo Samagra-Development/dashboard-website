@@ -25,6 +25,14 @@ export default class SatBlockDashboard extends Component {
     state = {
         urlGrade: `${url}`,
         urlLO: `${url}`,
+        blocks: [],
+        grade_categories: [],
+        subjects: [],
+        sat_events: [],
+        selectedBlock: "",
+        selectedGradeCategory: "",
+        selectedSubject: "",
+        selectedSatEvent: "",
         value: 0,
         width: 0,
         height: 0
@@ -36,7 +44,9 @@ export default class SatBlockDashboard extends Component {
         this.onLoadIframe = this.onLoadIframe.bind(this);
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
+        this.download = this.download.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this.download();
     }
 
     showFile(blob) {
@@ -85,6 +95,89 @@ export default class SatBlockDashboard extends Component {
         if (value !== 2) this.setState({value});
     };
 
+    download() {
+        const urls = [
+            {name:'blocks',url:'http://165.22.209.213:3000/api/public/dashboard/33f9d05f-2d4e-462a-91a2-08a653909aad/params/5ef3ddf0/values'},
+            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
+            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
+            {name:'subjects',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
+        ]
+        urls.forEach(element => {
+            fetch(element.url)
+            .then(response => response.json())
+            .then(json => {
+                this.setState({[element.name]: json});
+            });
+        });
+    }
+
+    onSelectBlock = (selectedBlock) => {
+        this.setState({selectedBlock: selectedBlock});
+    };
+
+    onSelectSatEvent = (satEvent) => {
+        this.setState({selectedSatEvent: satEvent});
+    }
+
+    onSelectGradeCategory = (setGradeCategory) => {
+        this.setState({selectedGradeCategory: setGradeCategory});
+    }
+
+    onSelectSubject = (setSubject) => {
+        this.setState({selectedSubject: setSubject});
+    }
+
+    setLink = () => {
+        var customUrl = "";
+        if(this.state.selectedBlock.length > 0) {
+            this.state.selectedBlock.map((e,index) => {
+                if(!index) {
+                    customUrl += 'block='+e;
+                } else {
+                    customUrl += '&block='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedGradeCategory.length > 0) {
+            this.state.selectedGradeCategory.map((e,index) => {
+                if(!index && this.state.selectedBlock.length <= 0) {
+                    customUrl += 'grade_category_='+e;
+                } else {
+                    customUrl += '&grade_category_='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedSubject.length > 0) {
+            this.state.selectedSubject.map((e,index) => {
+                if(!index && this.state.selectedBlock.length <= 0 && this.state.selectedGradeCategory.length <= 0) {
+                    customUrl += 'subject='+e;
+                } else {
+                    customUrl += '&subject='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedSatEvent.length > 0) {
+            this.state.selectedSatEvent.map((e,index) => {
+                if(!index && this.state.selectedBlock.length <= 0 && this.state.selectedGradeCategory.length <= 0 && this.state.selectedSubject.length <= 0) {
+                    customUrl += 'sat_event='+e;
+                } else {
+                    customUrl += '&sat_event='+e;
+                }
+            });
+        }
+        console.log('customUrl',customUrl);
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
+        } else {
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
+        }
+    }
+
     componentDidMount() {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
@@ -110,6 +203,15 @@ export default class SatBlockDashboard extends Component {
         window.removeEventListener('resize', this.updateWindowDimensions);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.selectedBlock !== this.state.selectedBlock
+            || prevState.selectedGradeCategory !== this.state.selectedGradeCategory
+            || prevState.selectedSubject !== this.state.selectedSubject
+            || prevState.selectedSatEvent !== this.state.selectedSatEvent) {
+            this.setLink();
+        }
+    }
+
     updateWindowDimensions() {
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
@@ -126,16 +228,16 @@ export default class SatBlockDashboard extends Component {
                             <SimpleDropdown
                                 multiple="1"
                                 title={"Block"}
-                                data={this.state.schools}
-                                onSelect={this.onSelectSchool}>
+                                data={this.state.blocks}
+                                onSelect={this.onSelectBlock}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
                                 title={"Grade Category"}
-                                data={this.state.sat_events}
-                                onSelect={this.onSelectDistrict}>
+                                data={this.state.grade_categories}
+                                onSelect={this.onSelectGradeCategory}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
@@ -143,7 +245,7 @@ export default class SatBlockDashboard extends Component {
                                 multiple="1"
                                 title={"Subject"}
                                 data={this.state.subjects}
-                                onSelect={this.onSelectBlock}>
+                                onSelect={this.onSelectSubject}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
@@ -151,7 +253,7 @@ export default class SatBlockDashboard extends Component {
                                 multiple="1"
                                 title={"SAT Event"}
                                 data={this.state.sat_events}
-                                onSelect={this.onSelectDistrict}>
+                                onSelect={this.onSelectSatEvent}>
                             </SimpleDropdown>
                         </Grid>
                     </Grid>

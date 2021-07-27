@@ -25,6 +25,10 @@ export default class SatStateDashboard extends Component {
     state = {
         urlGrade: `${url}`,
         urlLO: `${url}`,
+        event_names: [],
+        grade_categories: [],
+        selectedEventName: "",
+        selectedGradeCategory: "",
         value: 0,
         width: 0,
         height: 0
@@ -36,7 +40,9 @@ export default class SatStateDashboard extends Component {
         this.onLoadIframe = this.onLoadIframe.bind(this);
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
+        this.download = this.download.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this.download();
     }
 
     showFile(blob) {
@@ -85,6 +91,59 @@ export default class SatStateDashboard extends Component {
         if (value !== 2) this.setState({value});
     };
 
+    download() {
+        const urls = [
+            {name:'event_names',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/e6627e9c/values'},
+            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/23304afb/values'},
+        ]
+        urls.forEach(element => {
+            fetch(element.url)
+            .then(response => response.json())
+            .then(json => {
+                this.setState({[element.name]: json});
+            });
+        });
+    }
+
+    onSelectEventName = (setEventName) => {
+        this.setState({selectedEventName: setEventName});
+    }
+
+    onSelectGradeCategory = (setGradeCategory) => {
+        this.setState({selectedGradeCategory: setGradeCategory});
+    }
+
+    setLink = () => {
+        var customUrl = "";
+        if(this.state.selectedEventName.length > 0) {
+            this.state.selectedEventName.map((e,index) => {
+                if(!index) {
+                    customUrl += 'event_name='+e;
+                } else {
+                    customUrl += '&event_name='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedGradeCategory.length > 0) {
+            this.state.selectedGradeCategory.map((e,index) => {
+                if(!index && this.state.selectedEventName.length <= 0) {
+                    customUrl += 'grade_category='+e;
+                } else {
+                    customUrl += '&grade_category='+e;
+                }
+            });
+        }
+        
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
+        } else {
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
+        }
+    }
+
     componentDidMount() {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
@@ -110,6 +169,13 @@ export default class SatStateDashboard extends Component {
         window.removeEventListener('resize', this.updateWindowDimensions);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.selectedEventName !== this.state.selectedEventName
+            || prevState.selectedGradeCategory !== this.state.selectedGradeCategory) {
+            this.setLink();
+        }
+    }
+
     updateWindowDimensions() {
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
@@ -127,16 +193,16 @@ export default class SatStateDashboard extends Component {
                             <SimpleDropdown
                                 multiple="1"
                                 title={"Event Name"}
-                                data={this.state.schools}
-                                onSelect={this.onSelectSchool}>
+                                data={this.state.event_names}
+                                onSelect={this.onSelectEventName}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
                                 title={"Grade Category"}
-                                data={this.state.sat_events}
-                                onSelect={this.onSelectDistrict}>
+                                data={this.state.grade_categories}
+                                onSelect={this.onSelectGradeCategory}>
                             </SimpleDropdown>
                         </Grid>
                     </Grid>

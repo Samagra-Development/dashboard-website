@@ -25,6 +25,12 @@ export default class EmentoringDashboard extends Component {
     state = {
         urlGrade: `${url}`,
         urlLO: `${url}`,
+        month_and_year: '',
+        districts: [],
+        blocks: [],
+        valueMonthAndYear: "",
+        selectedDistrict: "",
+        selectedBlock: "",
         value: 0,
         width: 0,
         height: 0
@@ -37,6 +43,8 @@ export default class EmentoringDashboard extends Component {
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this.download = this.download.bind(this);
+        this.download();
     }
 
     showFile(blob) {
@@ -77,6 +85,20 @@ export default class EmentoringDashboard extends Component {
             });
     }
 
+    download() {
+        const urls = [
+            {name:'districts',url:'http://165.22.209.213:3000/api/public/dashboard/85ce72c8-3206-49a5-b7c8-28c2a4272ec0/params/450f89fc/values'},
+            {name:'blocks',url:'http://165.22.209.213:3000/api/public/dashboard/85ce72c8-3206-49a5-b7c8-28c2a4272ec0/params/dbd27c0d/values'},
+        ]
+        urls.forEach(element => {
+            fetch(element.url)
+            .then(response => response.json())
+            .then(json => {
+                this.setState({[element.name]: json});
+            });
+        });
+    }
+
     onLoadIframe() {
         console.log("Iframe loaded");
     }
@@ -85,38 +107,65 @@ export default class EmentoringDashboard extends Component {
         if (value !== 2) this.setState({value});
     };
 
+    onSetMonthAndYear = (event) => {
+        console.log(event.target.value);
+        this.setState({valueMonthAndYear: event.target.value});
+    };
+
+    onSelectDistrict = (selectedDistrict) => {
+        this.setState({selectedDistrict: selectedDistrict});
+    };
+
+    onSelectBlock = (selectedBlock) => {
+        this.setState({selectedBlock: selectedBlock});
+    };
+
+    setLink = () => {
+        var customUrl = "";
+        if(this.state.valueMonthAndYear != "") {
+            customUrl += 'month_and_year='+this.state.valueMonthAndYear;
+        }
+
+        if(this.state.selectedDistrict.length > 0) {
+            this.state.selectedDistrict.map((e,index) => {
+                if(!index && this.state.valueMonthAndYear == "") {
+                    customUrl += 'district='+e;
+                } else {
+                    customUrl += '&district='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedBlock.length > 0) {
+            this.state.selectedBlock.map((e,index) => {
+                if(!index && this.state.valueMonthAndYear == "" && this.state.selectedDistrict.length <= 0) {
+                    customUrl += 'block='+e;
+                } else {
+                    customUrl += '&block='+e;
+                }
+            });
+        }
+        
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
+        } else {
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
+        }
+    }
+
     componentDidMount() {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        if (typeof window !== "undefined" && window.location.href.indexOf("/elementary/") > -1) {
-            url = require('../assets/all_links').elementary_state;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'Elementary State Level Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/e-vidyalaya/") > -1) {
-            url = require('../assets/all_links').e_Vidyalaya_State_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Vidyalaya Dashboard - State Level'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/e-mentoring") > -1) {
+        if (typeof window !== "undefined" && window.location.href.indexOf("/e-mentoring") > -1) {
             url = require('../assets/all_links').e_Mentoring_Dashboard;
             this.setState({
                 urlGrade: url,
                 urlLO: url
             });
             dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Mentoring 2.0 Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/sat-level/") > -1) {
-            url = require('../assets/all_links').State_Level_SAT_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'State Dashboard'}});
         } else {
             url = require('../assets/all_links').secondary_state;
             this.setState({
@@ -129,6 +178,14 @@ export default class EmentoringDashboard extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+    
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.valueMonthAndYear !== this.state.valueMonthAndYear
+            || prevState.selectedDistrict !== this.state.selectedDistrict
+            || prevState.selectedBlock !== this.state.selectedBlock) {
+            this.setLink();
+        }
     }
 
     updateWindowDimensions() {
@@ -144,22 +201,6 @@ export default class EmentoringDashboard extends Component {
                 <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
-                            <SimpleDropdown
-                                multiple="1"
-                                title={"District"}
-                                data={this.state.schools}
-                                onSelect={this.onSelectSchool}>
-                            </SimpleDropdown>
-                        </Grid>
-                        <Grid item xs>
-                            <SimpleDropdown
-                                multiple="1"
-                                title={"Block"}
-                                data={this.state.sat_events}
-                                onSelect={this.onSelectDistrict}>
-                            </SimpleDropdown>
-                        </Grid>
-                        <Grid item xs>
                             <div style={{
                                 display: 'flex',
                                 flexWrap: 'wrap',
@@ -170,11 +211,28 @@ export default class EmentoringDashboard extends Component {
                                     label="Month & Year"
                                     type="date"
                                     variant="outlined"
+                                    onChange={this.onSetMonthAndYear}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
                                 />
                             </div>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"District"}
+                                data={this.state.districts}
+                                onSelect={this.onSelectDistrict}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"Block"}
+                                data={this.state.blocks}
+                                onSelect={this.onSelectBlock}>
+                            </SimpleDropdown>
                         </Grid>
                     </Grid>
                 </div>

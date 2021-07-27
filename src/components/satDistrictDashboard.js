@@ -25,27 +25,29 @@ export default class SatDistrictDashboard extends Component {
     state = {
         allData: [],
         districts: [],
+        grade_categories: [],
+        sat_events: [],
+        selectedDistrict: "",
+        selectedGradeCategory: "",
+        selectedSatEvent: "",
         value: 0,
         width: 0,
         height: 0,
         years: ["2018-19", "2017-18"],
         selectedYear: "",
-        selectedDistrict: "",
         ip: "",
     };
 
     constructor(props) {
         super(props);
-        this.loadData = this.loadData.bind(this);
         this.download = this.download.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.onLoadIframe = this.onLoadIframe.bind(this);
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-        this.onYearChange = this.onYearChange.bind(this);
         this.onSelectDistrict = this.onSelectDistrict.bind(this);
-        this.loadData();
+        this.download();
     }
 
     onLoadIframe() {
@@ -95,18 +97,19 @@ export default class SatDistrictDashboard extends Component {
         });
     }
 
-    download(url) {
-        fetch(url)
+    download() {
+        const urls = [
+            {name:'districts',url:'http://165.22.209.213:3000/api/public/dashboard/c446828a-1298-41c2-bd85-8e78b2c68509/params/6466d8d2/values'},
+            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
+            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'}
+        ]
+        urls.forEach(element => {
+            fetch(element.url)
             .then(response => response.json())
             .then(json => {
-                var districts = json['districts'];
-                this.setState({allData: json, districts: districts});
+                this.setState({[element.name]: json});
             });
-    }
-
-    loadData() {
-        const url = process.env.PUBLIC_URL + "/data.json";
-        this.download(url);
+        });
     }
 
     downloadPDF() {
@@ -127,22 +130,60 @@ export default class SatDistrictDashboard extends Component {
             });
     }
 
-    onSelectDistrict = (district) => {
-        district = encodeURIComponent(district);
-        this.setState({
-            selectedDistrict: district,
-            urlGrade: `${url}?district=${district}`,
-            urlLO: `${url}?district=${district}`
-        })
+    onSelectDistrict = (selectedDistrict) => {
+        this.setState({selectedDistrict: selectedDistrict});
+    };
+
+    onSelectSatEvent = (satEvent) => {
+        this.setState({selectedSatEvent: satEvent});
     }
 
-    onYearChange = (selectedYear) => {
-        if (this.state.selectedDistrict !== "") {
-            this.setState({selectedYear: selectedYear}, () => {
-                this.onSelectDistrict(this.state.selectedDistrict);
+    onSelectGradeCategory = (setGradeCategory) => {
+        this.setState({selectedGradeCategory: setGradeCategory});
+    }
+
+    onSelectSubject = (setSubject) => {
+        this.setState({selectedSubject: setSubject});
+    }
+
+    setLink = () => {
+        var customUrl = "";
+        if(this.state.selectedDistrict.length > 0) {
+            this.state.selectedDistrict.map((e,index) => {
+                if(!index) {
+                    customUrl += 'district='+e;
+                } else {
+                    customUrl += '&district='+e;
+                }
             });
+        }
+
+        if(this.state.selectedGradeCategory.length > 0) {
+            this.state.selectedGradeCategory.map((e,index) => {
+                if(!index && this.state.selectedDistrict.length <= 0) {
+                    customUrl += 'grade_category='+e;
+                } else {
+                    customUrl += '&grade_category='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedSatEvent.length > 0) {
+            this.state.selectedSatEvent.map((e,index) => {
+                if(!index && this.state.selectedDistrict.length <= 0 && this.state.selectedGradeCategory.length <= 0) {
+                    customUrl += 'sat_event='+e;
+                } else {
+                    customUrl += '&sat_event='+e;
+                }
+            });
+        }
+        console.log('customUrl',customUrl);
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
         } else {
-            this.setState({selectedYear: selectedYear});
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
         }
     }
 
@@ -176,6 +217,14 @@ export default class SatDistrictDashboard extends Component {
         window.removeEventListener('resize', this.updateWindowDimensions);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.selectedDistrict !== this.state.selectedDistrict
+            || prevState.selectedGradeCategory !== this.state.selectedGradeCategory
+            || prevState.selectedSatEvent !== this.state.selectedSatEvent) {
+            this.setLink();
+        }
+    }
+
     updateWindowDimensions() {
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
@@ -190,16 +239,16 @@ export default class SatDistrictDashboard extends Component {
                         <SimpleDropdown
                             multiple="1"
                             title={"District"}
-                            data={this.state.schools}
-                            onSelect={this.onSelectSchool}>
+                            data={this.state.districts}
+                            onSelect={this.onSelectDistrict}>
                         </SimpleDropdown>
                     </Grid>
                     <Grid item xs>
                         <SimpleDropdown
                             multiple="1"
                             title={"Grade Category"}
-                            data={this.state.sat_events}
-                            onSelect={this.onSelectDistrict}>
+                            data={this.state.grade_categories}
+                            onSelect={this.onSelectGradeCategory}>
                         </SimpleDropdown>
                     </Grid>
                     <Grid item xs>
@@ -207,7 +256,7 @@ export default class SatDistrictDashboard extends Component {
                             multiple="1"
                             title={"SAT Event"}
                             data={this.state.sat_events}
-                            onSelect={this.onSelectDistrict}>
+                            onSelect={this.onSelectSatEvent}>
                         </SimpleDropdown>
                     </Grid>
                 </Grid>

@@ -94,8 +94,8 @@ const Root = () => (
         <Route exact path="/e-vidyalaya/block-dashboard/" component={() => <EVidyalayaBlockDashboard />}/>
         <Route exact path="/e-mentoring/" component={() => <EmentoringDashboard />}/>
         <Route exact path="/sat-level/state-dashboard/" component={() => <SatStateDashboard />}/>
-        <Route exact path="/sat-level/block-dashboard/" component={() => <SatBlockDashboard />}/>
         <Route exact path="/sat-level/district-dashboard/" component={() => <SatDistrictDashboard />}/>
+        <Route exact path="/sat-level/block-dashboard/" component={() => <SatBlockDashboard />}/>
         <Route exact path="/sat-level/school-dashboard/" component={() => <SchoolDashboard />}/>
     </Switch>
 );

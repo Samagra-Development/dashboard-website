@@ -39,7 +39,7 @@ class SimpleDropdown extends React.Component {
   handleChange = event => {
     var value = this.props.multiple ? [] : '';
     if(this.props.multiple) {
-      console.log('dropDownValue',this.state.dropDownValue);
+      // console.log('dropDownValue',this.state.dropDownValue);
       value = {...this.state.dropDownValue, ['dropDownValue']:event.target.value}
     }
     this.setState({ dropDownValue: event.target.value });
