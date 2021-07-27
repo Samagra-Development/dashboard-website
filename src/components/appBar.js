@@ -27,10 +27,10 @@ import gohLogo from './../assets/GoH-Transparent.png'
 import avsarLogo from './../assets/_Avsar.png'
 
 const logs = [
-    {name:'Logo scert',url:scertLogo},
+    // {name:'Logo scert',url:scertLogo},
     {name:'GoH-Transparent',url:gohLogo},
-    {name:'Avsar',url:avsarLogo},
-    {name:'Saksham Haryana logo',url:SakshamHaryanaLogo}
+    // {name:'Avsar',url:avsarLogo},
+    // {name:'Saksham Haryana logo',url:SakshamHaryanaLogo}
 ];
 
 const styles = {
@@ -42,7 +42,7 @@ const styles = {
     },
     menuButton: {
         marginLeft: -12,
-        marginRight: 20,
+        // marginRight: 20,
     },
     list: {
         width: 250,

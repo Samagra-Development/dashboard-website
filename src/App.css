@@ -147,7 +147,7 @@ dashboard-options-header {
 
 .top-bar-logo {
     max-height: 40px;
-    padding: 5px 5px 0 0;
+    padding-right: 10px;
 }
 
 .home-footer {
