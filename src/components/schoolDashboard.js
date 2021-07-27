@@ -29,52 +29,54 @@ class SchoolDashboard extends Component {
 
     state = {
         allData: [],
+        districts: [],
+        blocks: [],
+        clusters: [],
         schools: [],
-        sat_events: [],
-        grade_categories: [],
-        subjects: [],
         url: "",
+        selectedBlock: "",
+        selectedCluster: "",
+        selectedDistrict: "",
         selectedSchool: "",
-        selectedSatEvent: "",
-        selectedGradeCategory: "",
-        selectedSubject: "",
         value: 0,
         years: ["2018-19", "2017-18"],
         selectedYear: "2018-19",
         width: 0,
         height: 0,
-        ip: "",
-        urlValue:""
+        ip: ""
     };
 
-    // handleChange = (event, value) => {
-    //     if (value !== 2) this.setState({value}, () => {
-    //         const filters = {
-    //             tab: this.state.value === 0 ? "Grade" : "LO",
-    //             selectedYear: this.state.selectedYear,
-    //             district: this.state.selectedDistrict,
-    //             block: this.state.selectedBlock,
-    //             cluster: this.state.selectedCluster,
-    //             school: this.state.selectedSchool,
-    //             ip: this.state.ip
-    //         }
-    //         trackEvent('School Dashbaord', 'View', JSON.stringify(filters));
-    //         ReactPiwik.push(['trackEvent', 'School Dashbaord', 'View', JSON.stringify(filters), JSON.stringify(filters)]);
-    //     });
-    // };
+    handleChange = (event, value) => {
+        if (value !== 2) this.setState({value}, () => {
+            const filters = {
+                tab: this.state.value === 0 ? "Grade" : "LO",
+                selectedYear: this.state.selectedYear,
+                district: this.state.selectedDistrict,
+                block: this.state.selectedBlock,
+                cluster: this.state.selectedCluster,
+                school: this.state.selectedSchool,
+                ip: this.state.ip
+            }
+            trackEvent('School Dashbaord', 'View', JSON.stringify(filters));
+            ReactPiwik.push(['trackEvent', 'School Dashbaord', 'View', JSON.stringify(filters), JSON.stringify(filters)]);
+        });
+    };
 
     constructor(props) {
         super(props);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-        this.onSelectSatEvent = this.onSelectSatEvent.bind(this);
+        this.loadData = this.loadData.bind(this);
+        this.onSelectDistrict = this.onSelectDistrict.bind(this);
         this.download = this.download.bind(this);
-        // this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.onYearChange = this.onYearChange.bind(this);
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
-        this.download();
+        this.loadData();
     }
 
     showFile(blob) {
+        console.log("Inside show file")
         var newBlob = new Blob([blob], {type: "application/pdf"})
 
         if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -105,90 +107,70 @@ class SchoolDashboard extends Component {
         // fetch("http://0.0.0.0:3022/export/pdf?url=" + url)
             .then(r => r.blob())
             .then((s) => {
+                console.log("Calling showFile now");
                 this.showFile(s);
                 ReactPiwik.push(['trackEvent', 'School Dashbaord', 'Download Completed', tab, tab]);
             });
     }
 
-    download() {
-        const urls = [
-            {name:'schools',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d24b2fc2/values'},
-            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
-            {name:'subjects',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
-        ]
-        urls.forEach(element => {
-            fetch(element.url)
+
+    download(url) {
+        fetch(url)
             .then(response => response.json())
             .then(json => {
-                this.setState({[element.name]: json});
+                var districts = json['districts'];
+                this.setState({allData: json, districts: districts});
             });
+    }
+
+    loadData() {
+        console.log("Loading data...");
+        const url = process.env.PUBLIC_URL + '/data.json';
+        this.download(url);
+    }
+
+    onSelectDistrict = (district) => {
+        const blocks = this.state.allData['Blocks-' + district];
+        this.setState({
+            blocks: blocks,
+            selectedDistrict: district,
+            urlGrade: `${url}?district=${district}`,
+            urlLO: `${url}?district=${district}`
         });
+    }
+
+    onSelectBlock = (block) => {
+        const schools = this.state.allData['Blocks-' + this.state.selectedDistrict + '-Schools-' + block];
+        console.log("Block selected", block, 'Blocks-' + this.state.selectedDistrict + '-Schools-' + block);
+        // this.setState({schools: schools, selectedBlock: block});
+        this.setState({
+            schools: schools, selectedBlock: block,
+            urlGrade: `${url}?block=${block}`,
+            urlLO: `${url}?block=${block}`
+        });
+    }
+
+    onSelectCluster = (cluster) => {
+        console.log("Cluster selected", cluster);
+        const filteredSchoolsForCluster = this.state.allData.filter((school, index, arr) => school.Cluster === cluster && school.Block === this.state.selectedBlock && school.District === this.state.selectedDistrict);
+        var schoolNames = [...new Set(filteredSchoolsForCluster.map(school => school.SchoolName))];
+        this.setState({schools: schoolNames, selectedCluster: cluster});
     }
 
     onSelectSchool = (selectedSchool) => {
         this.setState({selectedSchool: selectedSchool});
+        this.setState({urlGrade: `${url}?school=${selectedSchool}`})
+        this.setState({urlLO: `${url}?school=${selectedSchool}`})
     };
 
-    onSelectSatEvent = (satEvent) => {
-        this.setState({selectedSatEvent: satEvent});
-    }
-
-    onSelectGradeCategory = (setGradeCategory) => {
-        this.setState({selectedGradeCategory: setGradeCategory});
-    }
-
-    onSelectSubject = (setSubject) => {
-        this.setState({selectedSubject: setSubject});
-    }
-
-    setLink = () => {
-        var customUrl = "";
-        if(this.state.selectedSchool.length > 0) {
-            this.state.selectedSchool.map((e,index) => {
-                if(!index) {
-                    customUrl += 'school='+e;
-                } else {
-                    customUrl += '&school='+e;
-                }
+    onYearChange = (selectedYear) => {
+        console.log(this.state.selectedSchool);
+        if (this.state.selectedSchool !== "") {
+            this.setState({selectedYear: selectedYear}, () => {
+                this.onSelectSchool(this.state.selectedSchool);
             });
-        }
-        if(this.state.selectedSatEvent.length > 0) {
-            this.state.selectedSatEvent.map((e,index) => {
-                if(!index && this.state.selectedSchool.length <= 0) {
-                    customUrl += 'sat_event='+e;
-                } else {
-                    customUrl += '&sat_event='+e;
-                }
-            });
-        }
-
-        if(this.state.selectedGradeCategory.length > 0) {
-            this.state.selectedGradeCategory.map((e,index) => {
-                if(!index && this.state.selectedSchool.length <= 0 && this.state.selectedSatEvent.length <= 0) {
-                    customUrl += 'grade_category='+e;
-                } else {
-                    customUrl += '&grade_category='+e;
-                }
-            });
-        }
-
-        if(this.state.selectedSubject.length > 0) {
-            this.state.selectedSubject.map((e,index) => {
-                if(!index && this.state.selectedSchool.length <= 0 && this.state.selectedSatEvent.length <= 0 && this.state.selectedGradeCategory.length <= 0) {
-                    customUrl += 'subject='+e;
-                } else {
-                    customUrl += '&subject='+e;
-                }
-            });
-        }
-
-        if(customUrl != "") {
-            this.setState({urlGrade: `${url}?${customUrl}`});
-            this.setState({urlLO: `${url}?${customUrl}`});
         } else {
-            this.setState({urlGrade: url});
-            this.setState({urlLO: url});
+            this.setState({selectedYear: selectedYear});
         }
     }
 
@@ -199,13 +181,6 @@ class SchoolDashboard extends Component {
         if (typeof window !== "undefined" && window.location.href.indexOf("/elementary/") > -1) {
             url = require('../assets/all_links').elementary_school;
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Elementary School Level Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/sat-level/") > -1) {
-            url = require('../assets/all_links').School_Level_SAT_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'School Dashboard'}});
         } else {
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Secondary School Level Dashboard'}});
         }
@@ -213,15 +188,6 @@ class SchoolDashboard extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.selectedSchool !== this.state.selectedSchool
-            || prevState.selectedSatEvent !== this.state.selectedSatEvent
-            || prevState.selectedGradeCategory !== this.state.selectedGradeCategory
-            || prevState.selectedSubject !== this.state.selectedSubject) {
-            this.setLink();
-        }
     }
 
     updateWindowDimensions() {
@@ -237,49 +203,38 @@ class SchoolDashboard extends Component {
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
-                                multiple="1"
+                                title={"District"}
+                                data={this.state.districts}
+                                onSelect={this.onSelectDistrict}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                title={"Block"}
+                                data={this.state.blocks}
+                                onSelect={this.onSelectBlock}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
                                 title={"School"}
                                 data={this.state.schools}
                                 onSelect={this.onSelectSchool}>
                             </SimpleDropdown>
                         </Grid>
-                        <Grid item xs>
-                            <SimpleDropdown
-                                multiple="1"
-                                title={"SAT Event"}
-                                data={this.state.sat_events}
-                                onSelect={this.onSelectSatEvent}>
-                            </SimpleDropdown>
-                        </Grid>
-                        <Grid item xs>
-                            <SimpleDropdown
-                                multiple="1"
-                                title={"Grade Category"}
-                                data={this.state.grade_categories}
-                                onSelect={this.onSelectGradeCategory}>
-                            </SimpleDropdown>
-                        </Grid>
-                        <Grid item xs>
-                            <SimpleDropdown
-                                multiple="1"
-                                title={"Subject"}
-                                data={this.state.subjects}
-                                onSelect={this.onSelectSubject}>
-                            </SimpleDropdown>
-                        </Grid>
                     </Grid>
                 </div>
-                {/* <Tabs value={value} onChange={this.handleChange}>
-                   <Tab label="Grade"/>
-                   <Tab label="Learning Outcome"/>
-                   <Tab
-                        icon={<SaveAlt/>}
-                        className="download"
-                        onClick={() => {
-                            this.downloadPDF()
-                        }}>
-                   </Tab>
-                </Tabs> */}
+                {/*<Tabs value={value} onChange={this.handleChange}>*/}
+                {/*    <Tab label="Grade"/>*/}
+                {/*    <Tab label="Learning Outcome"/>*/}
+                {/*    <Tab*/}
+                {/*        icon={<SaveAlt/>}*/}
+                {/*        className="download"*/}
+                {/*        onClick={() => {*/}
+                {/*            this.downloadPDF()*/}
+                {/*        }}>*/}
+                {/*    </Tab>*/}
+                {/*</Tabs>*/}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

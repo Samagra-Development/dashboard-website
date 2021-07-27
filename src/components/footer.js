@@ -18,17 +18,7 @@ class Footer extends React.Component {
 
     getBranding(containerClass){
         return (
-            <Grid container spacing={40} justify="center" alignContent="center" alignItems="center" className={containerClass} xs={12}>
-                <Grid className="branding-div" item xs={4} justify="center" alignContent="center" alignItems="center">
-                    <img className="branding-image" src={GovtOfHPLogo} alt="govtOfHPLogo"/>
-                </Grid>
-                <Grid className="branding-div" item xs={4} justify="center" alignContent="center" alignItems="center">
-                    <img className="branding-image" src={SamarthLogo} alt="samarthLogo"/>
-                </Grid>
-                <Grid className="branding-div" item xs={4} justify="center" alignContent="center" alignItems="center">
-                    <img className="branding-image2" src={SSALogo} alt="SSALogo"/>
-                </Grid>
-            </Grid>
+           <></>
         );
     }
 
@@ -45,6 +35,5 @@ class Footer extends React.Component {
 Footer.propTypes = {
     classes: PropTypes.object.isRequired,
   };
-  
+
 export default withStyles(styles)(Footer);
-  

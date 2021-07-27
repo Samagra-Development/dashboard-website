@@ -4,7 +4,6 @@ import Iframe from 'react-iframe'
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import TextField from '@material-ui/core/TextField';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Header from "./header"
 import {trackEvent} from 'react-with-analytics';
@@ -21,14 +20,16 @@ const styles = {
 const baseURL = 'http://165.22.209.213:3000'
 let url = require('../assets/all_links').secondary_state;
 
-export default class SatStateDashboard extends Component {
+export default class SupportiveStateDistrictDashboard extends Component {
     state = {
         urlGrade: `${url}`,
         urlLO: `${url}`,
-        event_names: [],
-        grade_categories: [],
-        selectedEventName: "",
-        selectedGradeCategory: "",
+        years: [],
+        months: [],
+        districts: [],
+        selectedYear: [],
+        selectedMonth: [],
+        selectedDistrict: [],
         value: 0,
         width: 0,
         height: 0
@@ -40,8 +41,8 @@ export default class SatStateDashboard extends Component {
         this.onLoadIframe = this.onLoadIframe.bind(this);
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
-        this.download = this.download.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this.download = this.download.bind(this);
         this.download();
     }
 
@@ -83,18 +84,11 @@ export default class SatStateDashboard extends Component {
             });
     }
 
-    onLoadIframe() {
-        console.log("Iframe loaded");
-    }
-
-    handleChange = (event, value) => {
-        if (value !== 2) this.setState({value});
-    };
-
     download() {
         const urls = [
-            {name:'event_names',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/e6627e9c/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/23304afb/values'},
+            {name:'years',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/66a226bd/values'},
+            {name:'months',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/c4640f3a/values'},
+            {name:'districts',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/1f5d3b7d/values'},
         ]
         urls.forEach(element => {
             fetch(element.url)
@@ -105,32 +99,55 @@ export default class SatStateDashboard extends Component {
         });
     }
 
-    onSelectEventName = (setEventName) => {
-        this.setState({selectedEventName: setEventName});
+    onLoadIframe() {
+        console.log("Iframe loaded");
     }
 
-    onSelectGradeCategory = (setGradeCategory) => {
-        this.setState({selectedGradeCategory: setGradeCategory});
-    }
+    handleChange = (event, value) => {
+        if (value !== 2) this.setState({value});
+    };
+
+    onSelectYear = (selectedYear) => {
+        this.setState({selectedYear: selectedYear});
+    };
+
+    onSelectMonth = (selectedMonth) => {
+        this.setState({selectedMonth: selectedMonth});
+    };
+
+    onSelectDistrict = (selectedDistrict) => {
+        this.setState({selectedDistrict: selectedDistrict});
+    };
 
     setLink = () => {
         var customUrl = "";
-        if(this.state.selectedEventName.length > 0) {
-            this.state.selectedEventName.map((e,index) => {
+
+        if(this.state.selectedYear.length > 0) {
+            this.state.selectedYear.map((e,index) => {
                 if(!index) {
-                    customUrl += 'event_name='+e;
+                    customUrl += 'year='+e;
                 } else {
-                    customUrl += '&event_name='+e;
+                    customUrl += '&year='+e;
                 }
             });
         }
 
-        if(this.state.selectedGradeCategory.length > 0) {
-            this.state.selectedGradeCategory.map((e,index) => {
-                if(!index && this.state.selectedEventName.length <= 0) {
-                    customUrl += 'grade_category='+e;
+        if(this.state.selectedMonth.length > 0) {
+            this.state.selectedMonth.map((e,index) => {
+                if(!index && this.state.selectedYear.length <= 0) {
+                    customUrl += 'month='+e;
                 } else {
-                    customUrl += '&grade_category='+e;
+                    customUrl += '&month='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedDistrict.length > 0) {
+            this.state.selectedDistrict.map((e,index) => {
+                if(!index && this.state.selectedYear.length <= 0 && this.state.selectedMonth.length <= 0) {
+                    customUrl += 'district='+e;
+                } else {
+                    customUrl += '&district='+e;
                 }
             });
         }
@@ -148,13 +165,13 @@ export default class SatStateDashboard extends Component {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        if (typeof window !== "undefined" && window.location.href.indexOf("/sat-level/") > -1) {
-            url = require('../assets/all_links').State_Level_SAT_Dashboard;
+        if (typeof window !== "undefined" && window.location.href.indexOf("/supportive/") > -1) {
+            url = require('../assets/all_links').supportive_state_district_dashboard;
             this.setState({
                 urlGrade: url,
                 urlLO: url
             });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'State Dashboard'}});
+            dispatchCustomEvent({type: 'titleChange', data: {title: 'Supportive Supervision Dashboard: State and District Officers'}});
         } else {
             url = require('../assets/all_links').secondary_state;
             this.setState({
@@ -170,8 +187,9 @@ export default class SatStateDashboard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.selectedEventName !== this.state.selectedEventName
-            || prevState.selectedGradeCategory !== this.state.selectedGradeCategory) {
+        if (prevState.selectedYear !== this.state.selectedYear
+            || prevState.selectedMonth !== this.state.selectedMonth
+            || prevState.selectedDistrict !== this.state.selectedDistrict) {
             this.setLink();
         }
     }
@@ -186,23 +204,30 @@ export default class SatStateDashboard extends Component {
         return (
             <div>
                 <Header/>
-
                 <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
-                                title={"Event Name"}
-                                data={this.state.event_names}
-                                onSelect={this.onSelectEventName}>
+                                title={"Year"}
+                                data={this.state.years}
+                                onSelect={this.onSelectYear}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
-                                title={"Grade Category"}
-                                data={this.state.grade_categories}
-                                onSelect={this.onSelectGradeCategory}>
+                                title={"Month"}
+                                data={this.state.months}
+                                onSelect={this.onSelectMonth}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"District"}
+                                data={this.state.districts}
+                                onSelect={this.onSelectDistrict}>
                             </SimpleDropdown>
                         </Grid>
                     </Grid>

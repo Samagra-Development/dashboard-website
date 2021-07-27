@@ -10,9 +10,6 @@ import {withStyles} from '@material-ui/core/styles';
 import GovtOfHPLogo from './../assets/govt_of_hp_logo.png'
 import HomeMobileLogo from './../assets/Homepage Img.png'
 import SakshamHaryanaLogo from './../assets/Saksham Haryana logo.png'
-import scertLogo from './../assets/logo_scert.png'
-import gohLogo from './../assets/GoH-Transparent.png'
-import avsarLogo from './../assets/_Avsar.png'
 import SamarthLogo from './../assets/samarth_logo.png'
 import SSALogo from './../assets/ssa_logo.png'
 import Footer from '../components/footer';
@@ -23,13 +20,6 @@ import {Redirect} from "react-router-dom";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-
-const logs = [
-    {name:'Logo scert',url:scertLogo},
-    {name:'GoH-Transparent',url:gohLogo},
-    {name:'Avsar',url:avsarLogo},
-    {name:'Saksham Haryana logo',url:SakshamHaryanaLogo}
-];
 
 const styles = {
     dashboardLink: {
@@ -51,18 +41,17 @@ class HomePage extends Component {
     constructor(props) {
         super(props);
         this.thisIsTheEndMyOnlyFriendTheEnd = React.createRef();
-        this.state = {width: 0, height: 0,levels:[]};
+        this.state = {width: 0, height: 0};
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this.getLinkElement = this.getLinkElement.bind(this);
         this.getBranding = this.getBranding.bind(this);
         this.scrollToBottom = this.scrollToBottom.bind(this);
-        this.setLevels = this.setLevels.bind(this);
     }
 
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        dispatchCustomEvent({type: 'titleChange', data: {title: 'Department of School Education Dashboards'}});
+        dispatchCustomEvent({type: 'titleChange', data: {title: 'Mission Prerna: Supportive Supervision Dashboard'}});
     }
 
     componentWillUnmount() {
@@ -129,20 +118,6 @@ class HomePage extends Component {
         );
     }
 
-    setLevels(e) {
-        let levelOptions = [
-            {label: 'State',value:'state'},
-            {label: 'District',value:'district'},
-            {label: 'Block',value:'block'},
-        ];
-        if(e.target.value == 'sat-level') {
-            levelOptions = [...levelOptions,{label: 'School',value:'school'}];
-        } else if(e.target.value == 'e-mentoring') {
-            levelOptions = [];
-        }
-        this.setState({selectedDashboard: e.target.value,levels: levelOptions});
-    }
-
     render() {
         const {classes} = this.props;
         const dashboards = [
@@ -164,20 +139,17 @@ class HomePage extends Component {
             }
         ];
 
-        const {selectedDashboard, selectedLevel} = this.state;
+        const {selectedSchoolType, selectedDashboardType} = this.state;
         let urlPart1, urlPart2;
-        switch (selectedDashboard) {
-            case 'e-vidyalaya' :
-                urlPart1 = '/e-vidyalaya';
+        switch (selectedSchoolType) {
+            case 'elementary' :
+                urlPart1 = '/elementary';
                 break;
-            case 'e-mentoring':
-                urlPart1 = '/e-mentoring';
-                break;
-            case 'sat-level':
-                urlPart1 = '/sat-level';
+            case 'secondary':
+                urlPart1 = '/';
                 break;
         }
-        switch (selectedLevel) {
+        switch (selectedDashboardType) {
             case 'school' :
                 urlPart2 = '/school-dashboard';
                 break;
@@ -191,92 +163,71 @@ class HomePage extends Component {
                 urlPart2 = '/state-dashboard';
                 break;
         }
-        
         if (urlPart1 && urlPart2) {
             if (urlPart1 === '/') {
                 urlPart1 = ''
             }
             console.log(urlPart1 + urlPart2);
             return <Redirect to={urlPart1 + urlPart2}/>;
-        } else if(urlPart1 == '/e-mentoring') {
-            return <Redirect to={urlPart1}/>;
-        }
 
+        }
         return (
             <header className="App-header">
-                <div className="App-background" style={{height: (this.state.height - 84) + 'px'}}>
-                    {/* <div className="section-1">
-                        <img className={'mobile-logo'} src={SakshamHaryanaLogo} alt="govtOfHPLogo"/>
-                    </div> */}
-                    <div className="center-section">
-                        <div className="center-banner">
-                            {/* <div className={'center-banner-text'}>
-                                This Dashboard shows data collected during school visits conducted on the Saksham
-                                Samiksha Mobile Application
-                            </div> */}
-                            <div className={'center-banner-text'}>
-                                To visit the Dashboard, select Dashboard and Level from the dropdowns
+                <div className="App-background" style={{
+                    justifyContent: 'center',
+                    alignContent: 'center',
+                    height: (this.state.height - 84) + 'px'
+                }}>
+                    <div className="prerna-home-background">
+                        <div className="prerna-home-background-inner">
+                            <div className={'center-download-text'}>
+                                <div>This Dashboard shows the compliance level and insights from the school visits
+                                    recorded on Prerna Gunvatta App.
+                                </div>
+                                <br/>
+                                <div><strong>यह डैशबोर्ड मेंटर्स यानि SRGs, ARPs एवं DIET मेंटर्स द्वारा प्रेरणा
+                                    गुणवत्ता एप पर दर्ज की गई मासिक स्कूल विज़िट की जानकारी को दर्शाता है ।</strong>
+                                </div>
+                            </div>
+                            <div className="home-link-item">
+                                <a href="/e-supportive/state-district-dashboard">E-Supportive Supervision Dashboard: State and District Officers
+                                    <br/>
+                                    <div style={{marginTop: '5px'}}>यदि आप एक जिला अधिकारी है (DM, CDO, DIET प्राचार्य, BSA, DC, SRG आदि)</div>
+                                </a>
+                            </div>
+                            <div className="home-link-item">
+                                <a href="/e-supportive/block-dashboard">Supportive Supervision Dashboard: State and District Officers
+                                    <br/>
+                                    <div style={{marginTop: '5px'}}>यदि आप एक जिला अधिकारी है (DM, CDO, DIET प्राचार्य, BSA, DC, SRG आदि)</div>
+                                </a>
+                            </div>
+                            <div className="home-link-item">
+                                <a href="/supportive/state-district-dashboard">E-Supportive Supervision Dashboard: Block Officers
+                                    <br/>
+                                    <div style={{marginTop: '5px'}}>यदि आप एक ब्लॉक अधिकारी है (BEO, ARP, DIET मेंटर, आदि)
+                                    </div>
+                                </a>
+                            </div>
+                            <div className="home-link-item">
+                                <a href="/supportive/block-dashboard">Supportive Supervision Dashboard: Block Officers
+                                    <br/>
+                                    <div style={{marginTop: '5px'}}>यदि आप एक ब्लॉक अधिकारी है (BEO, ARP, DIET मेंटर, आदि)
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                        <div className="dashboard-link-container">
-                            <div className="selects-wrapper"
-                                 style={{flex: 1, padding: '10px', backgroundColor: 'white'}}>
-
-                                <FormControl variant="outlined" style={{width: '100%'}} className={classes.formControl}>
-                                    <InputLabel htmlFor="outlined-age-native-simple">Dashboard</InputLabel>
-                                    <Select
-                                        native
-                                        value={this.state.selectedDashboard}
-                                        onChange={(e) => this.setLevels(e)}
-                                        label="Select Dashboard"
-                                        inputProps={{
-                                            name: 'schoolType',
-                                            id: 'outlined-age-native-simple',
-                                        }}
-                                    >
-                                        <option aria-label="None" value=""/>
-                                        <option value={'e-vidyalaya'}>e-Vidyalaya Dashboard</option>
-                                        <option value={'e-mentoring'}>e-Mentoring Dashboard</option>
-                                        <option value={'sat-level'}>SAT Dashboard</option>
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className="selects-wrapper"
-                                 style={{flex: 1, padding: '10px', backgroundColor: 'white'}}>
-                                <FormControl variant="outlined" style={{width: '100%'}} className={classes.formControl}>
-                                    <InputLabel htmlFor="outlined-age-native-simple">Level</InputLabel>
-                                    <Select
-                                        native
-                                        value={this.state.selectedLevel}
-                                        onChange={(e) => this.setState({selectedLevel: e.target.value})}
-                                        label="Select Dashboard Type"
-                                        inputProps={{
-                                            name: 'dashboardType',
-                                            id: 'outlined-age-native-simple',
-                                        }}
-                                    >
-                                        <option aria-label="None" value=""/>
-                                        {this.state.levels.map((e,index) => <option key={index} value={e.value}>{e.label}</option>)}
-                                    </Select>
-                                </FormControl>
-                            </div>
-
-                        </div>
-
                     </div>
-                    <div className="home-footer">
-                        <div className="center-logo">
-                            {logs.map((e,index) => 
-                                <img key={index} className="branding-image" src={e.url} alt={e.name}/>
-                            )}
-                        </div>
-                        {/* <div className={'center-download-text'}>
-                            <a href="/download-report">Click Here to Download SAT Results Reports</a>
-                        </div>
-                        <div className="right-logo">
-                            <img className="branding-image" src={GovtOfHaryanaLogo} alt="govtOfHPLogo"/>
-                        </div> */}
-                    </div>
+                    {/*<div className="home-footer">*/}
+                    {/*    <div className="left-logo">*/}
+                    {/*        <img className="branding-image" src={SakshamHaryanaLogo} alt="govtOfHPLogo"/>*/}
+                    {/*    </div>*/}
+                    {/*    <div className={'center-download-text'}>*/}
+                    {/*        /!*<a href="/download-report">Click Here to Download SAT Results Reports</a>*!/*/}
+                    {/*    </div>*/}
+                    {/*    <div className="right-logo">*/}
+                    {/*        <img className="branding-image" src={GovtOfHaryanaLogo} alt="govtOfHPLogo"/>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
             </header>
         );

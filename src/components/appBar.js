@@ -18,20 +18,9 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import HomeIcon from '@material-ui/icons/Home';
 import Hidden from '@material-ui/core/Hidden';
-import GovtOfHPLogo from './../assets/Haryana Govt logo.png';
+import GovtOfHPLogo from './../assets/Final logo.png';
 import {trackPage, trackUser, trackEvent} from 'react-with-analytics';
 import {dispatchCustomEvent} from "../utils";
-import SakshamHaryanaLogo from './../assets/Saksham Haryana logo.png'
-import scertLogo from './../assets/logo_scert.png'
-import gohLogo from './../assets/GoH-Transparent.png'
-import avsarLogo from './../assets/_Avsar.png'
-
-const logs = [
-    // {name:'Logo scert',url:scertLogo},
-    {name:'GoH-Transparent',url:gohLogo},
-    // {name:'Avsar',url:avsarLogo},
-    // {name:'Saksham Haryana logo',url:SakshamHaryanaLogo}
-];
 
 const styles = {
     root: {
@@ -42,11 +31,11 @@ const styles = {
     },
     menuButton: {
         marginLeft: -12,
-        // marginRight: 20,
+        marginRight: 20,
     },
     list: {
         width: 250,
-    }
+    },
 };
 
 const ButtonWithRouter = withRouter(({history, ...props}) => (
@@ -96,7 +85,7 @@ class TopAppBar extends React.Component {
             left: false,
             bottom: false,
             right: false,
-            routeList: ['/e-vidyalaya/state-dashboard/','/e-vidyalaya/district-dashboard/','/e-vidyalaya/block-dashboard/','/e-mentoring/','/sat-level/state-dashboard/','/sat-level/district-dashboard/','/sat-level/block-dashboard/','/sat-level/school-dashboard/'],
+            routeList: ["/e-supportive/state-district-dashboard/", "/e-supportive/block-dashboard/", "/supportive/state-district-dashboard", "/supportive/block-dashboard/"],
             routeList2: ["/", "/user-manual/"]
         };
         if (!window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION') || parseInt(window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION')) < LOCAL_STORAGE_VERSION) {
@@ -147,7 +136,7 @@ class TopAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['e-Vidyalaya State Dashboard','e-Vidyalaya District Dashboard','e-Vidyalaya Block Dashboard','e-Mentoring Dashboard','State Level SAT Dashboard','District Level SAT Dashboard','Block Level SAT Dashboard','School Level SAT Dashboard'].map((text, index) => (
+                    {['E-Supportive Supervision Dashboard: State and District Officers', 'E-Supportive Supervision Dashboard: Block Officers', 'Supportive Supervision Dashboard: State and District Officers', 'Supportive Supervision Dashboard: Block Officers'].map((text, index) => (
                         <ListItemWithRouter text={text} icon={dashboardIcon} routingURL={this.state.routeList[index]}/>
                     ))}
                 </List>
@@ -183,15 +172,11 @@ class TopAppBar extends React.Component {
                                 {sideList}
                             </div>
                         </Drawer>
-                        {/* <ImageWithRouter image={GovtOfHPLogo} routingURL={'/'}/> */}
-                        {logs.map((e,index) => 
-                            <ImageWithRouter routingURL={'/'} key={index} image={e.url} alt={e.name}/>
-                        )}
                         <Typography variant="h6" color="inherit" className={classes.grow + ' header-title'}>
                             {title}
                         </Typography>
                         <Hidden smDown>
-                            <ButtonWithRouter title={"Home"} routingURL={'/'}></ButtonWithRouter>
+                            <ImageWithRouter image={GovtOfHPLogo} routingURL={'/'}/>
                         </Hidden>
                     </Toolbar>
                 </AppBar>

@@ -10,7 +10,6 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
-import TextField from '@material-ui/core/TextField';
 
 const styles = {
     iFrameStyle: {
@@ -21,10 +20,18 @@ const styles = {
 const baseURL = 'http://165.22.209.213:3000'
 let url = require('../assets/all_links').secondary_state;
 
-export default class EVidyalayaBlockDashboard extends Component {
+export default class SupportiveBlockDashboard extends Component {
     state = {
         urlGrade: `${url}`,
         urlLO: `${url}`,
+        years: [],
+        months: [],
+        districts: [],
+        blocks: [],
+        selectedYear: [],
+        selectedMonth: [],
+        selectedDistrict: [],
+        selectedBlock: [],
         value: 0,
         width: 0,
         height: 0
@@ -37,6 +44,8 @@ export default class EVidyalayaBlockDashboard extends Component {
         this.showFile = this.showFile.bind(this);
         this.downloadPDF = this.downloadPDF.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+        this.download = this.download.bind(this);
+        this.download();
     }
 
     showFile(blob) {
@@ -77,6 +86,22 @@ export default class EVidyalayaBlockDashboard extends Component {
             });
     }
 
+    download() {
+        const urls = [
+            {name:'years',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/66a226bd/values'},
+            {name:'months',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/c4640f3a/values'},
+            {name:'districts',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/1f5d3b7d/values'},
+            {name:'blocks',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/ae70b2f5/values'},
+        ]
+        urls.forEach(element => {
+            fetch(element.url)
+            .then(response => response.json())
+            .then(json => {
+                this.setState({[element.name]: json});
+            });
+        });
+    }
+
     onLoadIframe() {
         console.log("Iframe loaded");
     }
@@ -85,17 +110,92 @@ export default class EVidyalayaBlockDashboard extends Component {
         if (value !== 2) this.setState({value});
     };
 
+    onSelectYear = (selectedYear) => {
+        this.setState({selectedYear: selectedYear});
+    };
+
+    onSelectMonth = (selectedMonth) => {
+        this.setState({selectedMonth: selectedMonth});
+    };
+
+    onSelectDistrict = (selectedDistrict) => {
+        this.setState({selectedDistrict: selectedDistrict});
+    };
+
+    onSelectBlock = (selectedBlock) => {
+        this.setState({selectedBlock: selectedBlock});
+    };
+
+    setLink = () => {
+        var customUrl = "";
+
+        if(this.state.selectedYear.length > 0) {
+            this.state.selectedYear.map((e,index) => {
+                if(!index) {
+                    customUrl += 'year='+e;
+                } else {
+                    customUrl += '&year='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedMonth.length > 0) {
+            this.state.selectedMonth.map((e,index) => {
+                if(!index && this.state.selectedYear.length <= 0) {
+                    customUrl += 'month='+e;
+                } else {
+                    customUrl += '&month='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedDistrict.length > 0) {
+            this.state.selectedDistrict.map((e,index) => {
+                if(!index && this.state.selectedYear.length <= 0 && this.state.selectedMonth.length <= 0) {
+                    customUrl += 'district='+e;
+                } else {
+                    customUrl += '&district='+e;
+                }
+            });
+        }
+
+        if(this.state.selectedBlock.length > 0) {
+            this.state.selectedBlock.map((e,index) => {
+                if(!index && this.state.selectedYear.length <= 0 && this.state.selectedMonth.length <= 0 && this.state.selectedDistrict.length <= 0) {
+                    customUrl += 'block='+e;
+                } else {
+                    customUrl += '&block='+e;
+                }
+            });
+        }
+        
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
+        } else {
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
+        }
+    }
+
     componentDidMount() {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
-        if (typeof window !== "undefined" && window.location.href.indexOf("/e-vidyalaya/") > -1) {
-            url = require('../assets/all_links').e_Vidyalaya_State_Dashboard;
+        if (typeof window !== "undefined" && window.location.href.indexOf("/e-supportive/") > -1) {
+            url = require('../assets/all_links').e_supportive_block_dashboard;
             this.setState({
                 urlGrade: url,
                 urlLO: url
             });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Vidyalaya Dashboard - State Level'}});
+            dispatchCustomEvent({type: 'titleChange', data: {title: 'E-Supportive Supervision Dashboard: Block Officers'}});
+        } else if (typeof window !== "undefined" && window.location.href.indexOf("/supportive/") > -1) {
+            url = require('../assets/all_links').supportive_block_dashboard;
+            this.setState({
+                urlGrade: url,
+                urlLO: url
+            });
+            dispatchCustomEvent({type: 'titleChange', data: {title: 'Supportive Supervision Dashboard: Block Officers'}});
         } else {
             url = require('../assets/all_links').secondary_state;
             this.setState({
@@ -108,6 +208,15 @@ export default class EVidyalayaBlockDashboard extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.selectedYear !== this.state.selectedYear
+            || prevState.selectedMonth !== this.state.selectedMonth
+            || prevState.selectedDistrict !== this.state.selectedDistrict
+            || prevState.selectedBlock !== this.state.selectedBlock) {
+            this.setLink();
+        }
     }
 
     updateWindowDimensions() {
@@ -125,35 +234,34 @@ export default class EVidyalayaBlockDashboard extends Component {
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
+                                title={"Year"}
+                                data={this.state.years}
+                                onSelect={this.onSelectYear}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"Month"}
+                                data={this.state.months}
+                                onSelect={this.onSelectMonth}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
                                 title={"District"}
-                                data={this.state.schools}
-                                onSelect={this.onSelectSchool}>
+                                data={this.state.districts}
+                                onSelect={this.onSelectDistrict}>
                             </SimpleDropdown>
                         </Grid>
                         <Grid item xs>
                             <SimpleDropdown
                                 multiple="1"
                                 title={"Block"}
-                                data={this.state.schools}
-                                onSelect={this.onSelectSchool}>
+                                data={this.state.blocks}
+                                onSelect={this.onSelectBlock}>
                             </SimpleDropdown>
-                        </Grid>
-                        <Grid item xs>
-                            <div style={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                justifyContent: 'center',
-                                }}
-                            >
-                                <TextField
-                                    label="Date"
-                                    type="date"
-                                    variant="outlined"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                />
-                            </div>
                         </Grid>
                     </Grid>
                 </div>

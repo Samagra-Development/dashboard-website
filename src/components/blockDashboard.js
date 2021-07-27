@@ -207,20 +207,6 @@ export default class BlockDashboard extends Component {
         if (typeof window !== "undefined" && window.location.href.indexOf("/elementary/") > -1) {
             url = require('../assets/all_links').elementary_block;
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Elementary Block Level Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/e-vidyalaya/") > -1) {
-            url = require('../assets/all_links').e_Vidyalaya_Block_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Vidyalaya Dashboard - Block Level'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/sat-level/") > -1) {
-            url = require('../assets/all_links').Block_Level_SAT_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'Block Dashboard'}});
         } else {
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Secondary Block Level Dashboard'}});
         }
@@ -239,7 +225,7 @@ export default class BlockDashboard extends Component {
         return (
             <div>
                 <Header/>
-                {/* <div>
+                <div>
                     <Grid container spacing={24}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -257,17 +243,17 @@ export default class BlockDashboard extends Component {
                         </Grid>
                     </Grid>
                 </div>
-                <Tabs value={value} onChange={this.handleChange}>
-                   <Tab label="Grade"/>
-                   <Tab label="Learning Outcome"/>
-                   <Tab
-                       icon={<SaveAlt/>}
-                       className="download"
-                       onClick={() => {
-                           this.downloadPDF();
-                       }}
-                   />
-                </Tabs> */}
+                {/*<Tabs value={value} onChange={this.handleChange}>*/}
+                {/*    <Tab label="Grade"/>*/}
+                {/*    <Tab label="Learning Outcome"/>*/}
+                {/*    <Tab*/}
+                {/*        icon={<SaveAlt/>}*/}
+                {/*        className="download"*/}
+                {/*        onClick={() => {*/}
+                {/*            this.downloadPDF();*/}
+                {/*        }}*/}
+                {/*    />*/}
+                {/*</Tabs>*/}
                 {value === 0 && (
                     <Iframe
                         ref="metabaseIframeID1"

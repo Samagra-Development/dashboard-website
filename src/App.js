@@ -14,16 +14,16 @@ import ReactGA from "react-ga";
 import ReactPiwik from "react-piwik";
 import SchoolDashboard from "./components/schoolDashboard";
 import StateDashboard from "./components/stateDashboard";
-import EmentoringDashboard from "./components/ementoringDashboard";
-import SatStateDashboard from "./components/satStateDashboard";
-import SatBlockDashboard from "./components/satBlockDashboard";
-import SatDistrictDashboard from "./components/satDistrictDashboard";
-import EVidyalayaStateDashboard from "./components/eVidyalayaStateDashboard";
-import EVidyalayaDistrictDashboard from "./components/eVidyalayaDistrictDashboard";
-import EVidyalayaBlockDashboard from "./components/eVidyalayaBlockDashboard";
+import ESupportiveStateDistrictDashboard from "./components/eSupportiveStateDistrictDashboard";
+import ESupportiveBlockDashboard from "./components/eSupportiveBlockDashboard";
+import SupportiveStateDistrictDashboard from "./components/supportiveStateDistrictDashboard";
+import SupportiveBlockDashboard from "./components/supportiveBlockDashboard";
 import TopAppBar from "./components/appBar";
 import UserManual from "./components/userManual";
 import DownloadReportDashboard from "./components/downloadDashboard";
+import MonthlyComplianceDashboard from "./components/monthlyComplianceDashboard";
+import PrimaryDashboard from "./components/primaryDashboard";
+import UpperPrimaryDashboard from "./components/upperPrimaryDashboard";
 
 const theme = createMuiTheme({
     palette: {
@@ -53,9 +53,17 @@ const piwik = new ReactPiwik({
 
 // Set tracking ID
 const GA_TRACKING_ID =
-    process.env.NODE_ENV === "production" ? "UA-117691729-4" : "UA-117691729-2";
+    process.env.NODE_ENV === "production" ? "UA-157866469-2" : "UA-157866469-2";
 const debug = process.env.NODE_ENV === "production" ? false : true;
-initAnalytics(GA_TRACKING_ID, {debug: debug});
+// initAnalytics("UA-157866469", {debug: debug});
+
+ReactGA.initialize('UA-157866469-2', {
+  debug: true,
+  titleCase: false,
+  gaOptions: {
+    siteSpeedSampleRate: 100
+  }
+});
 
 class GAListener extends React.Component {
     static contextTypes = {
@@ -80,23 +88,19 @@ class GAListener extends React.Component {
 const Root = () => (
     <Switch>
         <Route exact path="/" component={HomePage}/>
-        <Route exact path="/school-dashboard/" component={() => <SchoolDashboard key={'1'}/>}/>
-        <Route exact path="/block-dashboard/" component={() => <BlockDashboard key={'3'}/>}/>
+        {/* <Route exact path="/monthly-compliance/" component={() => <MonthlyComplianceDashboard key={'1'}/>}/>
+        <Route exact path="/monthly-insights-primary/" component={() => <PrimaryDashboard key={'3'}/>}/>
+        <Route exact path="/monthly-insights-upper-primary/" component={() => <UpperPrimaryDashboard key={'3'}/>}/>
         <Route exact path="/district-dashboard/" component={() => <DistrictDashboard key={'4'}/>}/>
         <Route exact path="/state-dashboard/" component={() => <StateDashboard key={'5'}/>}/>
         <Route exact path="/elementary/school-dashboard/" component={() => <SchoolDashboard key={'2'}/>}/>
         <Route exact path="/elementary/block-dashboard/" component={() => <BlockDashboard key={'6'}/>}/>
         <Route exact path="/elementary/district-dashboard/" component={() => <DistrictDashboard key={'7'}/>}/>
-        <Route exact path="/elementary/state-dashboard/" component={() => <StateDashboard key={'8'}/>}/>
-        
-        <Route exact path="/e-vidyalaya/state-dashboard/" component={() => <EVidyalayaStateDashboard />}/>
-        <Route exact path="/e-vidyalaya/district-dashboard/" component={() => <EVidyalayaDistrictDashboard />}/>
-        <Route exact path="/e-vidyalaya/block-dashboard/" component={() => <EVidyalayaBlockDashboard />}/>
-        <Route exact path="/e-mentoring/" component={() => <EmentoringDashboard />}/>
-        <Route exact path="/sat-level/state-dashboard/" component={() => <SatStateDashboard />}/>
-        <Route exact path="/sat-level/district-dashboard/" component={() => <SatDistrictDashboard />}/>
-        <Route exact path="/sat-level/block-dashboard/" component={() => <SatBlockDashboard />}/>
-        <Route exact path="/sat-level/school-dashboard/" component={() => <SchoolDashboard />}/>
+        <Route exact path="/elementary/state-dashboard/" component={() => <StateDashboard key={'8'}/>}/> */}
+        <Route exact path="/e-supportive/state-district-dashboard/" component={() => <ESupportiveStateDistrictDashboard />}/>
+        <Route exact path="/e-supportive/block-dashboard/" component={() => <ESupportiveBlockDashboard />}/>
+        <Route exact path="/supportive/state-district-dashboard/" component={() => <SupportiveStateDistrictDashboard />}/>
+        <Route exact path="/supportive/block-dashboard/" component={() => <SupportiveBlockDashboard />}/>
     </Switch>
 );
 
@@ -111,6 +115,7 @@ function App() {
                     <AppWithRouter/>
                 </div>
             </MuiThemeProvider>
+
         </BrowserRouter>
     );
 }

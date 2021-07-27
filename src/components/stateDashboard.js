@@ -95,13 +95,6 @@ export default class StateDashboard extends Component {
                 urlLO: url
             });
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Elementary State Level Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/e-vidyalaya/") > -1) {
-            url = require('../assets/all_links').e_Vidyalaya_State_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Vidyalaya Dashboard - State Level'}});
         } else {
             url = require('../assets/all_links').secondary_state;
             this.setState({

@@ -153,20 +153,6 @@ export default class DistrictDashboard extends Component {
         if (typeof window !== "undefined" && window.location.href.indexOf("/elementary/") > -1) {
             url = require('../assets/all_links').elementary_district;
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Elementary District Level Dashboard'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/e-vidyalaya/") > -1) {
-            url = require('../assets/all_links').e_Vidyalaya_District_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'e-Vidyalaya Dashboard - District Level'}});
-        } else if (typeof window !== "undefined" && window.location.href.indexOf("/sat-level/") > -1) {
-            url = require('../assets/all_links').District_Level_SAT_Dashboard;
-            this.setState({
-                urlGrade: url,
-                urlLO: url
-            });
-            dispatchCustomEvent({type: 'titleChange', data: {title: 'District Dashboard'}});
         } else {
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Secondary District Level Dashboard'}});
         }
@@ -185,7 +171,7 @@ export default class DistrictDashboard extends Component {
         return (
             <div>
                 <Header/>
-                {/* <div>
+                <div>
                     <Grid container spacing={24}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -196,17 +182,17 @@ export default class DistrictDashboard extends Component {
                         </Grid>
                     </Grid>
                 </div>
-                <Tabs value={value} onChange={this.handleChange}>
-                   <Tab label="Grade"/>
-                   <Tab label="Learning Outcome"/>
-                   <Tab
-                       icon={<SaveAlt/>}
-                       className="download"
-                       onClick={() => {
-                           this.downloadPDF()
-                       }}>
-                   </Tab>
-                </Tabs> */}
+                {/*<Tabs value={value} onChange={this.handleChange}>*/}
+                {/*    <Tab label="Grade"/>*/}
+                {/*    <Tab label="Learning Outcome"/>*/}
+                {/*    <Tab*/}
+                {/*        icon={<SaveAlt/>}*/}
+                {/*        className="download"*/}
+                {/*        onClick={() => {*/}
+                {/*            this.downloadPDF()*/}
+                {/*        }}>*/}
+                {/*    </Tab>*/}
+                {/*</Tabs>*/}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"
