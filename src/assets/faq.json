@@ -1,0 +1,27 @@
+{
+    "faq": [
+        {
+            "question": "What is the Samarth Assessment Dashboard?",
+            "answer": "Samarth Assessment Dashboard is a publicly available portal which shows the performance of elementary students from Himachal Pradesh's government schools in the Summative Assessment 2 exam. The data is collected from all government schools once a year through OMR sheets, which are scanned at the District Level and digitised on the dashboard at State Level. The dashboard gives a view on grade and learning outcome performance with views available for State, District, Block and School level."
+        },
+        {
+            "question": "What is grade?",
+            "answer": "As per the Continuous Comprehensive Evaluation program, students are given grades for their performance in formative and summative assessments. The grades are provided as per the marks obtained by the student in each subject. The grades range as follows: \n<35% is E grade \n35 - 49% is D grade\n50 - 64% is C grade\n65 - 79% is B grade\n80 - 100% is A grade"
+        },
+        {
+            "question": "What is learning outcome?",
+            "answer": "Learning Outcomes indicate the expected levels of learning that a child should achieve for a particular class. These outcomes can be used as check points to assess learning at different points of time. The learning outcomes help teachers understand the learning levels of children in their respective classes individually as well as collectively. The NCERT has developed Learning Outcomes for each class in Languages (Hindi, English and Urdu), Mathematics, Environmental Studies, Science and Social Science up to the Elementary stage which have been used to create summative assessments as reflected in the dashboard"
+        },
+        {
+            "question": "How can I view my school's result in the dashboard?",
+            "answer": "From the home page, click on view dashboard. You will see five options for dashboard views. Select the first option of 'School dashboard'. To view the dashboard please select the year of assessment, district, block and school you want to view. You can choose from the grade level view of learning outcome view once the dashboard has loaded. You can also click on Download to get a pdf report of your school's result. Please paste a print out of this report in your school."
+        },
+        {
+            "question": "How can I download a report from the dashboard?",
+            "answer": "Once you have selected the school you want to view, click on the download tab to get a pdf copy of the grade level view of the dashboard"
+        }
+    ]
+}
+
+	
+	

@@ -1,0 +1,47 @@
+{
+  "name": "hp-samarth",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
+    "file-save": "^0.2.0",
+    "pako": "^1.0.10",
+    "path": "^0.12.7",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-ga": "^2.5.7",
+    "react-iframe": "^1.8.0",
+    "react-piwik": "^1.6.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "3.0.0",
+    "react-select": "^3.1.0",
+    "react-with-analytics": "^0.0.5",
+    "read-excel-file": "^4.0.5",
+    "workbox-webpack-plugin": "^4.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-app-rewired build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "react-app-rewired": "^2.1.3"
+  }
+}
