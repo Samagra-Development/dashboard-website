@@ -8,8 +8,8 @@
   "secondary_block": "https://dash.staging.saksham.samagra.io/public/dashboard/acf05f56-c4ac-45d2-9d95-193edc49a60a",
   "secondary_school": "https://dash.staging.saksham.samagra.io/public/dashboard/461198a6-4042-4028-8097-281762da3a77",
 
-  "e_supportive_state_district_dashboard": "http://159.65.152.166:3000/public/dashboard/aa8bd7c7-f977-442a-805e-0595becffb54",
-  "e_supportive_block_dashboard": "http://159.65.152.166:3000/public/dashboard/57c62caa-be61-45cb-a770-92ecf3a6c733",
-  "supportive_state_district_dashboard": "http://159.65.152.166:3000/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c",
-  "supportive_block_dashboard": "http://159.65.152.166:3000/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40"
+  "e_supportive_state_district_dashboard": "https://dashboard.mp.samagra.io/public/dashboard/aa8bd7c7-f977-442a-805e-0595becffb54",
+  "e_supportive_block_dashboard": "https://dashboard.mp.samagra.io/public/dashboard/57c62caa-be61-45cb-a770-92ecf3a6c733",
+  "supportive_state_district_dashboard": "https://dashboard.mp.samagra.io/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c",
+  "supportive_block_dashboard": "https://dashboard.mp.samagra.io/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40"
 }

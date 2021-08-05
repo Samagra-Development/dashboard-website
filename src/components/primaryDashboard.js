@@ -25,7 +25,7 @@ const styles = {
 let url = require('../assets/all_links').secondary_block;
 
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = "http://159.65.152.166:3000/public/dashboard/5ef076ba-8b8c-4d8d-8b2c-3c8a34a12ff7?";
+const baseURL = "https://dashboard.mp.samagra.io/public/dashboard/5ef076ba-8b8c-4d8d-8b2c-3c8a34a12ff7?";
 
 function dateRange(startDate, endDate) {
     var start = startDate.split('-');

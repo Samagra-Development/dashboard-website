@@ -10,11 +10,16 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 // const baseURL = 'http://134.209.177.56:3000'
 const baseURL = 'http://165.22.209.213:3000'
@@ -32,7 +37,8 @@ export default class SupportiveStateDistrictDashboard extends Component {
         selectedDistrict: [],
         value: 0,
         width: 0,
-        height: 0
+        height: 0,
+        loding: true
     };
 
     constructor(props) {
@@ -86,15 +92,20 @@ export default class SupportiveStateDistrictDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'years',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/66a226bd/values'},
-            {name:'months',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/c4640f3a/values'},
-            {name:'districts',url:'http://159.65.152.166:3000/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/1f5d3b7d/values'},
+            {name:'years',url:'https://dashboard.mp.samagra.io/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/66a226bd/values'},
+            {name:'months',url:'https://dashboard.mp.samagra.io/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/c4640f3a/values'},
+            {name:'districts',url:'https://dashboard.mp.samagra.io/api/public/dashboard/bca341a1-0726-427b-b6a2-97e82245658c/params/1f5d3b7d/values'},
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -204,7 +215,11 @@ export default class SupportiveStateDistrictDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <div>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -231,7 +246,7 @@ export default class SupportiveStateDistrictDashboard extends Component {
                             </SimpleDropdown>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

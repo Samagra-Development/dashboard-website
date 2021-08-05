@@ -10,11 +10,16 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 // const baseURL = 'http://134.209.177.56:3000'
 const baseURL = 'http://165.22.209.213:3000'
@@ -34,7 +39,8 @@ export default class SupportiveBlockDashboard extends Component {
         selectedBlock: [],
         value: 0,
         width: 0,
-        height: 0
+        height: 0,
+        loding: true
     };
 
     constructor(props) {
@@ -88,16 +94,21 @@ export default class SupportiveBlockDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'years',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/66a226bd/values'},
-            {name:'months',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/c4640f3a/values'},
-            {name:'districts',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/1f5d3b7d/values'},
-            {name:'blocks',url:'http://159.65.152.166:3000/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/ae70b2f5/values'},
+            {name:'years',url:'https://dashboard.mp.samagra.io/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/66a226bd/values'},
+            {name:'months',url:'https://dashboard.mp.samagra.io/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/c4640f3a/values'},
+            {name:'districts',url:'https://dashboard.mp.samagra.io/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/1f5d3b7d/values'},
+            {name:'blocks',url:'https://dashboard.mp.samagra.io/api/public/dashboard/1528e874-eac2-48e1-a6cb-7488e2011e40/params/ae70b2f5/values'},
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -229,7 +240,11 @@ export default class SupportiveBlockDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <div>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -264,7 +279,7 @@ export default class SupportiveBlockDashboard extends Component {
                             </SimpleDropdown>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

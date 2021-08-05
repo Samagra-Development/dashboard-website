@@ -24,7 +24,7 @@ const styles = {
 };
 
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = "http://159.65.152.166:3000/public/dashboard/4644c564-6fb3-482b-b66f-6b5f17882c5a?";
+const baseURL = "https://dashboard.mp.samagra.io/public/dashboard/4644c564-6fb3-482b-b66f-6b5f17882c5a?";
 
 function dateRange(startDate, endDate) {
     var start = startDate.split('-');
