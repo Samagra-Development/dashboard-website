@@ -11,14 +11,19 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = 'http://165.22.209.213:3000'
+const baseURL = 'https://saksham.monitoring.dashboard.samagra.io'
 let url = require('../assets/all_links').secondary_state;
 
 export default class SatStateDashboard extends Component {
@@ -31,7 +36,8 @@ export default class SatStateDashboard extends Component {
         selectedGradeCategory: "",
         value: 0,
         width: 0,
-        height: 0
+        height: 0,
+        loding: true
     };
 
     constructor(props) {
@@ -93,14 +99,19 @@ export default class SatStateDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'event_names',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/e6627e9c/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/23304afb/values'},
+            {name:'event_names',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/e6627e9c/values'},
+            {name:'grade_categories',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/7d896ea6-dcd3-4631-bc64-0444f68391dd/params/23304afb/values'},
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -187,7 +198,11 @@ export default class SatStateDashboard extends Component {
             <div>
                 <Header/>
 
-                <div>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -206,7 +221,7 @@ export default class SatStateDashboard extends Component {
                             </SimpleDropdown>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

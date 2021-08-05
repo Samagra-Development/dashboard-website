@@ -19,7 +19,7 @@ const styles = {
 let url = require('../assets/all_links').secondary_district;
 
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = 'http://165.22.209.213:3000';
+const baseURL = 'https://saksham.monitoring.dashboard.samagra.io';
 export default class DistrictDashboard extends Component {
 
     state = {

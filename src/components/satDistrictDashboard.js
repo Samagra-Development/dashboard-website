@@ -10,16 +10,21 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 let url = require('../assets/all_links').secondary_district;
 
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = 'http://165.22.209.213:3000';
+const baseURL = 'https://saksham.monitoring.dashboard.samagra.io';
 export default class SatDistrictDashboard extends Component {
 
     state = {
@@ -36,6 +41,7 @@ export default class SatDistrictDashboard extends Component {
         years: ["2018-19", "2017-18"],
         selectedYear: "",
         ip: "",
+        loding: true
     };
 
     constructor(props) {
@@ -99,15 +105,20 @@ export default class SatDistrictDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'districts',url:'http://165.22.209.213:3000/api/public/dashboard/c446828a-1298-41c2-bd85-8e78b2c68509/params/6466d8d2/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
-            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'}
+            {name:'districts',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c446828a-1298-41c2-bd85-8e78b2c68509/params/6466d8d2/values'},
+            {name:'grade_categories',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
+            {name:'sat_events',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'}
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -234,43 +245,49 @@ export default class SatDistrictDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
-                    <Grid item xs>
-                        <SimpleDropdown
-                            multiple="1"
-                            title={"District"}
-                            data={this.state.districts}
-                            onSelect={this.onSelectDistrict}>
-                        </SimpleDropdown>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
+                    <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"District"}
+                                data={this.state.districts}
+                                onSelect={this.onSelectDistrict}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"Grade Category"}
+                                data={this.state.grade_categories}
+                                onSelect={this.onSelectGradeCategory}>
+                            </SimpleDropdown>
+                        </Grid>
+                        <Grid item xs>
+                            <SimpleDropdown
+                                multiple="1"
+                                title={"SAT Event"}
+                                data={this.state.sat_events}
+                                onSelect={this.onSelectSatEvent}>
+                            </SimpleDropdown>
+                        </Grid>
                     </Grid>
-                    <Grid item xs>
-                        <SimpleDropdown
-                            multiple="1"
-                            title={"Grade Category"}
-                            data={this.state.grade_categories}
-                            onSelect={this.onSelectGradeCategory}>
-                        </SimpleDropdown>
-                    </Grid>
-                    <Grid item xs>
-                        <SimpleDropdown
-                            multiple="1"
-                            title={"SAT Event"}
-                            data={this.state.sat_events}
-                            onSelect={this.onSelectSatEvent}>
-                        </SimpleDropdown>
-                    </Grid>
-                </Grid>
-                {/* <Tabs value={value} onChange={this.handleChange}>
-                   <Tab label="Grade"/>
-                   <Tab label="Learning Outcome"/>
-                   <Tab
-                       icon={<SaveAlt/>}
-                       className="download"
-                       onClick={() => {
-                           this.downloadPDF()
-                       }}>
-                   </Tab>
-                </Tabs> */}
+                    {/* <Tabs value={value} onChange={this.handleChange}>
+                    <Tab label="Grade"/>
+                    <Tab label="Learning Outcome"/>
+                    <Tab
+                        icon={<SaveAlt/>}
+                        className="download"
+                        onClick={() => {
+                            this.downloadPDF()
+                        }}>
+                    </Tab>
+                    </Tabs> */}
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

@@ -11,14 +11,19 @@ import {trackEvent} from 'react-with-analytics';
 import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = 'http://165.22.209.213:3000'
+const baseURL = 'https://saksham.monitoring.dashboard.samagra.io'
 let url = require('../assets/all_links').secondary_state;
 
 export default class SatBlockDashboard extends Component {
@@ -35,7 +40,8 @@ export default class SatBlockDashboard extends Component {
         selectedSatEvent: "",
         value: 0,
         width: 0,
-        height: 0
+        height: 0,
+        loding: true
     };
 
     constructor(props) {
@@ -97,16 +103,21 @@ export default class SatBlockDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'blocks',url:'http://165.22.209.213:3000/api/public/dashboard/33f9d05f-2d4e-462a-91a2-08a653909aad/params/5ef3ddf0/values'},
-            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
-            {name:'subjects',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
+            {name:'blocks',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/33f9d05f-2d4e-462a-91a2-08a653909aad/params/5ef3ddf0/values'},
+            {name:'sat_events',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
+            {name:'grade_categories',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
+            {name:'subjects',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -222,7 +233,11 @@ export default class SatBlockDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <div>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -257,7 +272,7 @@ export default class SatBlockDashboard extends Component {
                             </SimpleDropdown>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"

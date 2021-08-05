@@ -13,17 +13,22 @@ import {getIP} from './../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {baseURLPrinter} from './../configs'
 import {dispatchCustomEvent} from "../utils";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 let url = require('../assets/all_links').secondary_school;
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    lodingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 };
 
 
 // const baseURL = 'http://134.209.177.56:3000'
-const baseURL = 'http://165.22.209.213:3000'
+const baseURL = 'https://saksham.monitoring.dashboard.samagra.io'
 
 class SchoolDashboard extends Component {
 
@@ -44,7 +49,8 @@ class SchoolDashboard extends Component {
         width: 0,
         height: 0,
         ip: "",
-        urlValue:""
+        urlValue:"",
+        loding: true
     };
 
     // handleChange = (event, value) => {
@@ -112,16 +118,21 @@ class SchoolDashboard extends Component {
 
     download() {
         const urls = [
-            {name:'schools',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d24b2fc2/values'},
-            {name:'sat_events',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
-            {name:'grade_categories',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
-            {name:'subjects',url:'http://165.22.209.213:3000/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
+            {name:'schools',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d24b2fc2/values'},
+            {name:'sat_events',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/e64d15cb/values'},
+            {name:'grade_categories',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/d42ba65/values'},
+            {name:'subjects',url:'https://saksham.monitoring.dashboard.samagra.io/api/public/dashboard/c9cdab6a-a0de-4862-aae2-429f94d08e04/params/7c5fd706/values'},
         ]
+        let ctr = 0;
         urls.forEach(element => {
             fetch(element.url)
             .then(response => response.json())
             .then(json => {
                 this.setState({[element.name]: json});
+                ctr++; 
+                if (ctr === urls.length) {
+                    this.setState({loding: false});
+                }
             });
         });
     }
@@ -233,7 +244,11 @@ class SchoolDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <div>
+                {this.state.loding ?
+                    <div style={styles.lodingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <SimpleDropdown
@@ -268,7 +283,7 @@ class SchoolDashboard extends Component {
                             </SimpleDropdown>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {/* <Tabs value={value} onChange={this.handleChange}>
                    <Tab label="Grade"/>
                    <Tab label="Learning Outcome"/>
