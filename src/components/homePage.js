@@ -196,13 +196,13 @@ class HomePage extends Component {
                                 </a>
                             </div>
                             <div className="home-link-item">
-                                <a href="/e-supportive/block-dashboard">Supportive Supervision Dashboard: State and District Officers
+                                <a href="/supportive/state-district-dashboard">Supportive Supervision Dashboard: State and District Officers
                                     <br/>
                                     <div style={{marginTop: '5px'}}>यदि आप एक जिला अधिकारी है (DM, CDO, DIET प्राचार्य, BSA, DC, SRG आदि)</div>
                                 </a>
                             </div>
                             <div className="home-link-item">
-                                <a href="/supportive/state-district-dashboard">E-Supportive Supervision Dashboard: Block Officers
+                                <a href="/e-supportive/block-dashboard">E-Supportive Supervision Dashboard: Block Officers
                                     <br/>
                                     <div style={{marginTop: '5px'}}>यदि आप एक ब्लॉक अधिकारी है (BEO, ARP, DIET मेंटर, आदि)
                                     </div>
