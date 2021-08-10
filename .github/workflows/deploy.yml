@@ -34,4 +34,4 @@ jobs:
           script: |
             cd /home/dashboard-website/
             npm run build &&
-            npn run start
+            npm run start
