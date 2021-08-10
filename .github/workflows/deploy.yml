@@ -23,7 +23,7 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy files with rsync
-        run: rsync -avz --exclude '.git' --exclude '.github' . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/dashboard run-website/
+        run: rsync -avz --exclude '.git' --exclude '.github' . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/dashboard-website/
 
       - name: Rebuild production
         uses: appleboy/ssh-action@master
