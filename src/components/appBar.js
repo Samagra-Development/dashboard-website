@@ -85,7 +85,7 @@ class TopAppBar extends React.Component {
             left: false,
             bottom: false,
             right: false,
-            routeList: ["/e-supportive/state-district-dashboard/", "/e-supportive/block-dashboard/", "/supportive/state-district-dashboard", "/supportive/block-dashboard/"],
+            routeList: ["/e-supportive/state-district-dashboard/", "/supportive/state-district-dashboard", "/e-supportive/block-dashboard/", "/supportive/block-dashboard/"],
             routeList2: ["/", "/user-manual/"]
         };
         if (!window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION') || parseInt(window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION')) < LOCAL_STORAGE_VERSION) {
@@ -136,7 +136,7 @@ class TopAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['E-Supportive Supervision Dashboard: State and District Officers', 'E-Supportive Supervision Dashboard: Block Officers', 'Supportive Supervision Dashboard: State and District Officers', 'Supportive Supervision Dashboard: Block Officers'].map((text, index) => (
+                    {['E-Supportive Supervision Dashboard: State and District Officers', 'Supportive Supervision Dashboard: State and District Officers', 'E-Supportive Supervision Dashboard: Block Officers', 'Supportive Supervision Dashboard: Block Officers'].map((text, index) => (
                         <ListItemWithRouter text={text} icon={dashboardIcon} routingURL={this.state.routeList[index]}/>
                     ))}
                 </List>
