@@ -2,7 +2,7 @@ name: deploy-to-production
 on:
   # release:
   #   types: [published]
-  pull_request:
+  push:
     branches:
       - release/mission-prerna
 jobs:
@@ -33,4 +33,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/dashboard-website/
-            npm run build
+            npm run build &&
+            npn run start
