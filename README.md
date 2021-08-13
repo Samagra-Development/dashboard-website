@@ -1,5 +1,5 @@
 # Dashboard Websites
- - Started react project to build static sites containing realtime dashboards and capture usage logs
+ - Starter react project to build static sites containing realtime dashboards and capture usage logs
 
 ## Deployment
 - This project is deployed automatically via Github Actions
