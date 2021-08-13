@@ -1,4 +1,28 @@
-The project is hosted [here](http://intense-journey-32037.herokuapp.com/)
+# Dashboard Websites
+ - Started react project to build static sites containing realtime dashboards and capture usage logs
+
+## Deployment
+- This project is deployed automatically via Github Actions
+- The environment must be configured to have an `SSH_HOST`, `SSH_USERNAME` and `SSH_PRIVATE_KEY` variable
+#### nginx configuration
+```
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+       
+        root /home/dashboard-website/build;
+      
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.                
+                try_files $uri $uri/ /index.html;
+        }
+}
+```
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
