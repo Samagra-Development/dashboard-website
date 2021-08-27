@@ -20,7 +20,7 @@ const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
-    lodingStyle: {
+    loadingStyle: {
         display: 'flex',
         justifyContent: 'center',
     }
@@ -50,7 +50,7 @@ class SchoolDashboard extends Component {
         height: 0,
         ip: "",
         urlValue:"",
-        loding: true
+        loading: true
     };
 
     // handleChange = (event, value) => {
@@ -131,7 +131,7 @@ class SchoolDashboard extends Component {
                 this.setState({[element.name]: json});
                 ctr++; 
                 if (ctr === urls.length) {
-                    this.setState({loding: false});
+                    this.setState({loading: false});
                 }
             });
         });
@@ -244,8 +244,8 @@ class SchoolDashboard extends Component {
         return (
             <div>
                 <Header/>
-                {this.state.loding ?
-                    <div style={styles.lodingStyle}>
+                {this.state.loading ?
+                    <div style={styles.loadingStyle}>
                         <CircularProgress />
                     </div>
                 : <div>

@@ -17,7 +17,7 @@ const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
-    lodingStyle: {
+    loadingStyle: {
         display: 'flex',
         justifyContent: 'center',
     }
@@ -37,7 +37,7 @@ export default class SatStateDashboard extends Component {
         value: 0,
         width: 0,
         height: 0,
-        loding: true
+        loading: true
     };
 
     constructor(props) {
@@ -110,7 +110,7 @@ export default class SatStateDashboard extends Component {
                 this.setState({[element.name]: json});
                 ctr++; 
                 if (ctr === urls.length) {
-                    this.setState({loding: false});
+                    this.setState({loading: false});
                 }
             });
         });
@@ -198,8 +198,8 @@ export default class SatStateDashboard extends Component {
             <div>
                 <Header/>
 
-                {this.state.loding ?
-                    <div style={styles.lodingStyle}>
+                {this.state.loading ?
+                    <div style={styles.loadingStyle}>
                         <CircularProgress />
                     </div>
                 : <div>

@@ -11,11 +11,16 @@ import {getIP} from '../utils/ip';
 import ReactPiwik from 'react-piwik';
 import {dispatchCustomEvent} from "../utils";
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
+    loadingStyle: {
+        display: 'flex',
+        justifyContent: 'center',
+    }
 }
 // const baseURL = 'http://134.209.177.56:3000'
 const baseURL = 'https://saksham.monitoring.dashboard.samagra.io'
@@ -27,7 +32,9 @@ export default class EVidyalayaStateDashboard extends Component {
         urlLO: `${url}`,
         value: 0,
         width: 0,
-        height: 0
+        height: 0,
+        valueAttendate: "",
+        loading: true
     };
 
     constructor(props) {
@@ -85,6 +92,25 @@ export default class EVidyalayaStateDashboard extends Component {
         if (value !== 2) this.setState({value});
     };
 
+    onSetAttendate = (event) => {
+        this.setState({valueAttendate: event.target.value});
+    };
+
+    setLink = () => {
+        var customUrl = "";
+        if(this.state.valueAttendate != "") {
+            customUrl += 'attendate='+this.state.valueAttendate;
+        }
+        
+        if(customUrl != "") {
+            this.setState({urlGrade: `${url}?${customUrl}`});
+            this.setState({urlLO: `${url}?${customUrl}`});
+        } else {
+            this.setState({urlGrade: url});
+            this.setState({urlLO: url});
+        }
+    }
+
     componentDidMount() {
         getIP().then((ip) => this.setState({ip}));
         this.updateWindowDimensions();
@@ -104,10 +130,17 @@ export default class EVidyalayaStateDashboard extends Component {
             });
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Secondary State Level Dashboard'}});
         }
+        this.setState({loading: false});
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateWindowDimensions);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.valueAttendate !== this.state.valueAttendate) {
+            this.setLink();
+        }
     }
 
     updateWindowDimensions() {
@@ -120,7 +153,11 @@ export default class EVidyalayaStateDashboard extends Component {
         return (
             <div>
                 <Header/>
-                <div>
+                {this.state.loading ?
+                    <div style={styles.loadingStyle}>
+                        <CircularProgress />
+                    </div>
+                : <div>
                     <Grid container spacing={0} style={{margin: 0, width: '100%'}}>
                         <Grid item xs>
                             <div style={{
@@ -133,6 +170,7 @@ export default class EVidyalayaStateDashboard extends Component {
                                     label="Date"
                                     type="date"
                                     variant="outlined"
+                                    onChange={this.onSetAttendate}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
@@ -140,7 +178,7 @@ export default class EVidyalayaStateDashboard extends Component {
                             </div>
                         </Grid>
                     </Grid>
-                </div>
+                </div>}
                 {value === 0 && <Iframe ref="metabaseIframeID1"
                                         url={this.state.urlGrade}
                                         width="100%"
