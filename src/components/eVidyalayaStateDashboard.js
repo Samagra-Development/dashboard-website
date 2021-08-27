@@ -17,7 +17,7 @@ const styles = {
     iFrameStyle: {
         pointerEvents: 'none'
     },
-    lodingStyle: {
+    loadingStyle: {
         display: 'flex',
         justifyContent: 'center',
     }
@@ -34,7 +34,7 @@ export default class EVidyalayaStateDashboard extends Component {
         width: 0,
         height: 0,
         valueAttendate: "",
-        loding: true
+        loading: true
     };
 
     constructor(props) {
@@ -130,7 +130,7 @@ export default class EVidyalayaStateDashboard extends Component {
             });
             dispatchCustomEvent({type: 'titleChange', data: {title: 'Secondary State Level Dashboard'}});
         }
-        this.setState({loding: false});
+        this.setState({loading: false});
     }
 
     componentWillUnmount() {
@@ -153,8 +153,8 @@ export default class EVidyalayaStateDashboard extends Component {
         return (
             <div>
                 <Header/>
-                {this.state.loding ?
-                    <div style={styles.lodingStyle}>
+                {this.state.loading ?
+                    <div style={styles.loadingStyle}>
                         <CircularProgress />
                     </div>
                 : <div>
