@@ -135,9 +135,12 @@ class HomePage extends Component {
             {label: 'District',value:'district'},
             {label: 'Block',value:'block'},
         ];
-        if(e.target.value == 'sat-level') {
+        if(['sat-level','sat-elementary','sat-sr-secondary'].includes(e.target.value)) {
             levelOptions = [...levelOptions,{label: 'School',value:'school'}];
-        } else if(e.target.value == 'e-mentoring') {
+            if(['sat-elementary','sat-sr-secondary'].includes(e.target.value)) {
+                levelOptions = levelOptions.filter(e => e.value != 'state');
+            }
+        } else if(['e-mentoring','sat-state-dashboard'].includes(e.target.value)) {
             levelOptions = [];
         }
         this.setState({selectedDashboard: e.target.value,levels: levelOptions});
@@ -145,24 +148,6 @@ class HomePage extends Component {
 
     render() {
         const {classes} = this.props;
-        const dashboards = [
-            {
-                text: 'State Dashboard',
-                link: '/state-dashboard/'
-            },
-            {
-                text: 'District Dashboard',
-                link: '/district-dashboard/'
-            },
-            {
-                text: 'Block Dashboard',
-                link: '/block-dashboard/'
-            },
-            {
-                text: 'School Dashboard',
-                link: '/school-dashboard/'
-            }
-        ];
 
         const {selectedDashboard, selectedLevel} = this.state;
         let urlPart1, urlPart2;
@@ -172,6 +157,15 @@ class HomePage extends Component {
                 break;
             case 'e-mentoring':
                 urlPart1 = '/e-mentoring';
+                break;
+            case 'sat-elementary' :
+                urlPart1 = '/sat-elementary';
+                break;
+            case 'sat-sr-secondary' :
+                urlPart1 = '/sat-sr-secondary';
+                break;
+            case 'sat-state-dashboard' :
+                urlPart1 = '/sat-state-dashboard';
                 break;
             case 'sat-level':
                 urlPart1 = '/sat-level';
@@ -191,29 +185,21 @@ class HomePage extends Component {
                 urlPart2 = '/state-dashboard';
                 break;
         }
-        
+
         if (urlPart1 && urlPart2) {
             if (urlPart1 === '/') {
                 urlPart1 = ''
             }
-            console.log(urlPart1 + urlPart2);
             return <Redirect to={urlPart1 + urlPart2}/>;
-        } else if(urlPart1 == '/e-mentoring') {
+        } else if(['/sat-state-dashboard','/e-mentoring'].includes(urlPart1)) {
             return <Redirect to={urlPart1}/>;
         }
 
         return (
             <header className="App-header">
                 <div className="App-background" style={{height: (this.state.height - 84) + 'px'}}>
-                    {/* <div className="section-1">
-                        <img className={'mobile-logo'} src={SakshamHaryanaLogo} alt="govtOfHPLogo"/>
-                    </div> */}
                     <div className="center-section">
                         <div className="center-banner">
-                            {/* <div className={'center-banner-text'}>
-                                This Dashboard shows data collected during school visits conducted on the Saksham
-                                Samiksha Mobile Application
-                            </div> */}
                             <div className={'center-banner-text'}>
                                 To visit the Dashboard, select Dashboard and Level from the dropdowns
                             </div>
@@ -221,7 +207,6 @@ class HomePage extends Component {
                         <div className="dashboard-link-container">
                             <div className="selects-wrapper"
                                  style={{flex: 1, padding: '10px', backgroundColor: 'white'}}>
-
                                 <FormControl variant="outlined" style={{width: '100%'}} className={classes.formControl}>
                                     <InputLabel htmlFor="outlined-age-native-simple">Dashboard</InputLabel>
                                     <Select
@@ -237,7 +222,10 @@ class HomePage extends Component {
                                         <option aria-label="None" value=""/>
                                         <option value={'e-vidyalaya'}>e-Vidyalaya Dashboard</option>
                                         <option value={'e-mentoring'}>e-Mentoring Dashboard</option>
-                                        <option value={'sat-level'}>SAT Dashboard</option>
+                                        <option value={'sat-state-dashboard'}>State Level SAT Dashboard (July - August 2021)</option>
+                                        <option value={'sat-elementary'}>SAT Dashboard (July - August 2021) - Elementary</option>
+                                        <option value={'sat-sr-secondary'}>SAT Dashboard (July - August 2021) - Sr.Secondary</option>
+                                        <option value={'sat-level'}>SAT Dashboard - Old</option>
                                     </Select>
                                 </FormControl>
                             </div>

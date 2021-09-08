@@ -4,8 +4,11 @@ import {BrowserRouter, Route, Switch, withRouter} from "react-router-dom";
 import {MuiThemeProvider, createMuiTheme} from "@material-ui/core/styles";
 import withAnalytics, {initAnalytics} from "react-with-analytics";
 
-import BlockDashboard from "./components/blockDashboard";
-import DistrictDashboard from "./components/districtDashboard";
+import ElementaryBlockDashboard from "./components/ElementaryBlockDashboard";
+import ElementaryDistrictDashboard from "./components/ElementaryDistrictDashboard";
+import SrSecondaryDistrictDashboard from "./components/SrSecondaryDistrictDashboard";
+import SrSecondaryBlockDashboard from "./components/SrSecondaryBlockDashboard";
+import SrSecondarySchoolDashboard from "./components/SrSecondarySchoolDashboard";
 import HomePage from "./components/homePage";
 import {PropTypes} from "prop-types";
 import RankingDashboard from "./components/rankingDashbaord";
@@ -13,7 +16,8 @@ import React from "react";
 import ReactGA from "react-ga";
 import ReactPiwik from "react-piwik";
 import SchoolDashboard from "./components/schoolDashboard";
-import StateDashboard from "./components/stateDashboard";
+import ElementarySchoolDashboard from "./components/ElementarySchoolDashboard";
+import StateLevelSATDashboard  from "./components/StateLevelSATDashboard ";
 import EmentoringDashboard from "./components/ementoringDashboard";
 import SatStateDashboard from "./components/satStateDashboard";
 import SatBlockDashboard from "./components/satBlockDashboard";
@@ -79,20 +83,18 @@ class GAListener extends React.Component {
 
 const Root = () => (
     <Switch>
-        <Route exact path="/" component={HomePage}/>
-        <Route exact path="/school-dashboard/" component={() => <SchoolDashboard key={'1'}/>}/>
-        <Route exact path="/block-dashboard/" component={() => <BlockDashboard key={'3'}/>}/>
-        <Route exact path="/district-dashboard/" component={() => <DistrictDashboard key={'4'}/>}/>
-        <Route exact path="/state-dashboard/" component={() => <StateDashboard key={'5'}/>}/>
-        <Route exact path="/elementary/school-dashboard/" component={() => <SchoolDashboard key={'2'}/>}/>
-        <Route exact path="/elementary/block-dashboard/" component={() => <BlockDashboard key={'6'}/>}/>
-        <Route exact path="/elementary/district-dashboard/" component={() => <DistrictDashboard key={'7'}/>}/>
-        <Route exact path="/elementary/state-dashboard/" component={() => <StateDashboard key={'8'}/>}/>
-        
+        <Route exact path="/" component={HomePage}/>                
         <Route exact path="/e-vidyalaya/state-dashboard/" component={() => <EVidyalayaStateDashboard />}/>
         <Route exact path="/e-vidyalaya/district-dashboard/" component={() => <EVidyalayaDistrictDashboard />}/>
         <Route exact path="/e-vidyalaya/block-dashboard/" component={() => <EVidyalayaBlockDashboard />}/>
         <Route exact path="/e-mentoring/" component={() => <EmentoringDashboard />}/>
+        <Route exact path="/sat-state-dashboard/" component={() => <StateLevelSATDashboard />}/>
+        <Route exact path="/sat-elementary/district-dashboard/" component={() => <ElementaryDistrictDashboard/>}/>
+        <Route exact path="/sat-elementary/block-dashboard/" component={() => <ElementaryBlockDashboard/>}/>
+        <Route exact path="/sat-elementary/school-dashboard/" component={() => <ElementarySchoolDashboard/>}/>
+        <Route exact path="/sat-sr-secondary/district-dashboard/" component={() => <SrSecondaryDistrictDashboard/>}/>
+        <Route exact path="/sat-sr-secondary/block-dashboard/" component={() => <SrSecondaryBlockDashboard/>}/>
+        <Route exact path="/sat-sr-secondary/school-dashboard/" component={() => <SrSecondarySchoolDashboard/>}/>
         <Route exact path="/sat-level/state-dashboard/" component={() => <SatStateDashboard />}/>
         <Route exact path="/sat-level/district-dashboard/" component={() => <SatDistrictDashboard />}/>
         <Route exact path="/sat-level/block-dashboard/" component={() => <SatBlockDashboard />}/>
