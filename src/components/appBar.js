@@ -96,7 +96,23 @@ class TopAppBar extends React.Component {
             left: false,
             bottom: false,
             right: false,
-            routeList: ['/e-vidyalaya/state-dashboard/','/e-vidyalaya/district-dashboard/','/e-vidyalaya/block-dashboard/','/e-mentoring/','/sat-level/state-dashboard/','/sat-level/district-dashboard/','/sat-level/block-dashboard/','/sat-level/school-dashboard/'],
+            routeList: [
+                '/e-vidyalaya/state-dashboard/',
+                '/e-vidyalaya/district-dashboard/',
+                '/e-vidyalaya/block-dashboard/',
+                '/e-mentoring/',
+                '/sat-state-dashboard/',
+                '/sat-elementary/district-dashboard/',
+                '/sat-elementary/block-dashboard/',
+                '/sat-elementary/school-dashboard/',
+                '/sat-sr-secondary/district-dashboard/',
+                '/sat-sr-secondary/block-dashboard/',
+                '/sat-sr-secondary/school-dashboard/',
+                '/sat-level/state-dashboard/',
+                '/sat-level/district-dashboard/',
+                '/sat-level/block-dashboard/',
+                '/sat-level/school-dashboard/'
+            ],
             routeList2: ["/", "/user-manual/"]
         };
         if (!window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION') || parseInt(window.localStorage.getItem('SAT-LOCAL_STORAGE_VERSION')) < LOCAL_STORAGE_VERSION) {
@@ -147,14 +163,30 @@ class TopAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['e-Vidyalaya State Dashboard','e-Vidyalaya District Dashboard','e-Vidyalaya Block Dashboard','e-Mentoring Dashboard','State Level SAT Dashboard','District Level SAT Dashboard','Block Level SAT Dashboard','School Level SAT Dashboard'].map((text, index) => (
-                        <ListItemWithRouter text={text} icon={dashboardIcon} routingURL={this.state.routeList[index]}/>
+                    {[
+                        'e-Vidyalaya State Dashboard',
+                        'e-Vidyalaya District Dashboard',
+                        'e-Vidyalaya Block Dashboard',
+                        'e-Mentoring Dashboard',
+                        'State Level SAT Dashboard (July - August 2021)',
+                        'SAT Dashboard (July - August 2021) - Elementary - District',
+                        'SAT Dashboard (July - August 2021) - Elementary - Block',
+                        'SAT Dashboard (July - August 2021) - Elementary - School',
+                        'SAT Dashboard (July - August 2021) - Sr.Secondary - District',
+                        'SAT Dashboard (July - August 2021) - Sr.Secondary - Block',
+                        'SAT Dashboard (July - August 2021) - Sr.Secondary - School',
+                        'State Level SAT Dashboard - Old',
+                        'District Level SAT Dashboard - Old',
+                        'Block Level SAT Dashboard - Old',
+                        'School Level SAT Dashboard - Old'
+                    ].map((text, index) => (
+                        <ListItemWithRouter key={index} text={text} icon={dashboardIcon} routingURL={this.state.routeList[index]}/>
                     ))}
                 </List>
                 <Divider/>
                 <List>
                     {['Home'].map((text, index) => (
-                        <ListItemWithRouter text={text} icon={otherIcons(index)}
+                        <ListItemWithRouter key={index} text={text} icon={otherIcons(index)}
                                             routingURL={this.state.routeList2[index]}/>
                     ))}
                 </List>
